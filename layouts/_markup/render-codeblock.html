@@ -1,0 +1,5 @@
+{{- /* Wrap highlighted code with a language tab (CSS: .codeblock[data-lang]). */ -}}
+{{- $lang := .Type | default "text" -}}
+<div class="codeblock" data-lang="{{ $lang }}">
+{{- highlight .Inner $lang .Options -}}
+</div>

@@ -7,15 +7,14 @@ ShowBreadCrumbs: false
 ShowPostNavLinks: false
 ---
 
+<p class="about-lead"><span class="t-prompt">brave@bounty:~$</span> cat about.txt</p>
+
 Hi, I'm **Alexander Inkoom**, an application security engineer. This is where I publish bug bounty write-ups and AppSec notes — mostly web and API vulnerabilities, how I found them, and how they should be fixed.
 
 All write-ups are published only after the issue is fixed and disclosure is permitted by the program.
 
 ## Find me
 
-> These are **placeholder links** — replace `your-handle` with the real handles in `content/about.md` and `hugo.toml`.
+{{< social-cards >}}
 
-- HackerOne: <https://hackerone.com/your-handle>
-- Bugcrowd: <https://bugcrowd.com/your-handle>
-- X / Twitter: <https://x.com/your-handle>
-- GitHub: <https://github.com/your-handle>
+> These are **placeholder links** — replace `your-handle` with your real handles in `hugo.toml` (`[[params.socialIcons]]`), which feeds both these cards and the homepage icons.

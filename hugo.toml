@@ -31,7 +31,7 @@ enableGitInfo = false
   description = "Bug bounty write-ups and AppSec notes."
   author = "Alexander Inkoom"
   defaultTheme = "dark"
-  disableThemeToggle = false
+  disableThemeToggle = true   # neon design is dark-only
   ShowReadingTime = true
   ShowPostNavLinks = true
   ShowBreadCrumbs = true
@@ -45,6 +45,21 @@ enableGitInfo = false
   [params.homeInfoParams]
     Title = "brave"
     Content = "Bug bounty write-ups and AppSec notes."
+
+  # Homepage terminal hero
+  [params.terminal]
+    user = "brave"
+    host = "bounty"
+    handle = "your-handle"            # TODO: your bug bounty handle
+    focus = "XSS · IDOR · SSRF · Auth bypass"
+    latest = 3                        # how many write-ups `ls writeups/` lists
+
+  # Homepage stat cards.
+  # "Write-ups" and "Bug classes" are computed automatically from content.
+  # The two below are PLACEHOLDERS: leave as "" to show "—", or fill in your real numbers.
+  [params.stats]
+    bugsReported = ""                 # TODO: e.g. "42"
+    hallOfFames = ""                  # TODO: e.g. "7"
 
   # Placeholder social links — replace with your real handles.
   [[params.socialIcons]]
