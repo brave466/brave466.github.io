@@ -1,0 +1,8 @@
+{{- /* Renders colored severity badges for a page. Context: page */ -}}
+{{- with .GetTerms "severity" -}}
+<span class="sev-badges">
+  {{- range . -}}
+  <a class="sev-badge sev-{{ .Title | lower | urlize }}" href="{{ .RelPermalink }}" title="Severity: {{ .Title }}">{{ .Title }}</a>
+  {{- end -}}
+</span>
+{{- end -}}

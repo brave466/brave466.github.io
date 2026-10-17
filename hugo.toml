@@ -1,0 +1,99 @@
+# Replace USERNAME with your GitHub username before deploying.
+baseURL = "https://USERNAME.github.io/"
+languageCode = "en-us"
+title = "brave"
+theme = "PaperMod"
+enableRobotsTXT = true
+enableGitInfo = false
+
+[pagination]
+  pagerSize = 10
+
+[taxonomies]
+  tag = "tags"
+  severity = "severity"
+  category = "categories"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]   # JSON index powers Fuse.js search
+
+[markup]
+  [markup.highlight]
+    noClasses = false      # use CSS classes; styles live in assets/css/extended/syntax.css
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+  [markup.goldmark.renderer]
+    unsafe = true
+
+[params]
+  env = "production"
+  description = "Bug bounty write-ups and AppSec notes."
+  author = "Alexander Inkoom"
+  defaultTheme = "dark"
+  disableThemeToggle = false
+  ShowReadingTime = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowToc = true
+  TocOpen = false
+  ShowShareButtons = false
+  DateFormat = "January 2, 2006"
+  mainSections = ["posts"]
+
+  [params.homeInfoParams]
+    Title = "brave"
+    Content = "Bug bounty write-ups and AppSec notes."
+
+  # Placeholder social links — replace with your real handles.
+  [[params.socialIcons]]
+    name = "hackerone"
+    url = "https://hackerone.com/your-handle"
+  [[params.socialIcons]]
+    name = "bugcrowd"
+    url = "https://bugcrowd.com/your-handle"
+  [[params.socialIcons]]
+    name = "x"
+    url = "https://x.com/your-handle"
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/your-handle"
+  [[params.socialIcons]]
+    name = "rss"
+    url = "index.xml"
+
+  [params.fuseOpts]
+    isCaseSensitive = false
+    shouldSort = true
+    location = 0
+    distance = 1000
+    threshold = 0.4
+    minMatchCharLength = 0
+    keys = ["title", "permalink", "summary", "content"]
+
+[menu]
+  [[menu.main]]
+    name = "Write-ups"
+    url = "/posts/"
+    weight = 10
+  [[menu.main]]
+    name = "Tags"
+    url = "/tags/"
+    weight = 20
+  [[menu.main]]
+    name = "Severity"
+    url = "/severity/"
+    weight = 30
+  [[menu.main]]
+    name = "Archives"
+    url = "/archives/"
+    weight = 40
+  [[menu.main]]
+    name = "Search"
+    url = "/search/"
+    weight = 50
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 60

@@ -1,0 +1,175 @@
+/* ==========================================================
+   brave — "dark but clean" overrides for PaperMod
+   Accent: teal #2dd4bf  ·  Background: charcoal #16181d
+   ========================================================== */
+
+:root {
+  --accent: #2dd4bf;
+  --accent-hover: #5eead4;
+  --accent-soft: rgba(45, 212, 191, 0.12);
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+:root[data-theme="dark"] {
+  --theme: #16181d;          /* page background */
+  --entry: #1e2128;          /* cards */
+  --primary: #e6e8ec;        /* headings */
+  --secondary: #9aa1ad;      /* meta text */
+  --tertiary: #2c3038;       /* borders/hover */
+  --content: #d3d6dc;        /* body text */
+  --code-block-bg: #0f1115;
+  --code-bg: #262a32;
+  --border: #2a2e36;
+}
+
+/* Light mode (toggle) — keep the accent but darker for contrast */
+:root:not([data-theme="dark"]) {
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-soft: rgba(15, 118, 110, 0.10);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+code, pre, kbd, samp, .highlight, .chroma { font-family: var(--font-mono); }
+
+/* Links: accent only inside content, nav stays neutral */
+.post-content a, .home-info .entry-content a, .finding-card a, .breadcrumbs a,
+.paginav a:hover, .post-tags a:hover {
+  color: var(--accent);
+  text-decoration: none;
+  box-shadow: none;
+  border-bottom: 1px solid transparent;
+}
+.post-content a:hover, .finding-card a:hover { color: var(--accent-hover); border-bottom-color: var(--accent-hover); }
+#menu a:hover, #menu .active { color: var(--accent); }
+#menu .active { border-bottom: 2px solid var(--accent); }
+.logo a { color: var(--primary); letter-spacing: .02em; }
+
+/* Post list cards */
+.post-entry { border: 1px solid var(--border); transition: border-color .15s ease, transform .15s ease; }
+.post-entry:hover { border-color: var(--accent); }
+.post-entry .entry-header h2 { font-size: 22px; line-height: 1.35; }
+.home-info .entry-content { color: var(--secondary); font-size: 18px; }
+
+/* Tags (post footer + tag cloud) */
+.post-tags a, .terms-tags a {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid transparent;
+  font-size: 14px;
+}
+.post-tags a:hover, .terms-tags a:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+/* Inline code */
+.post-content :not(pre) > code {
+  color: #f0f2f5;
+  background: var(--code-bg);
+  font-size: .88em;
+  padding: .12em .4em;
+  border-radius: 4px;
+}
+:root:not([data-theme="dark"]) .post-content :not(pre) > code { color: #1f2328; }
+
+/* Code blocks */
+.post-content pre, .post-content .highlight pre { border: 1px solid var(--border); border-radius: 8px; }
+.post-content pre code { font-size: 14px; line-height: 1.6; }
+.post-content .highlight:not(table) { background: var(--code-block-bg) !important; border-radius: 8px; }
+
+/* Headings inside write-ups */
+.post-content h2 {
+  margin-top: 2.2rem;
+  padding-bottom: .35rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 26px;
+}
+
+/* Blockquotes */
+.post-content blockquote { border-inline-start: 3px solid var(--accent); color: var(--secondary); }
+
+/* Tables (timeline) */
+.post-content table:not(.highlighttable, .highlight table, .gist .highlight) th { background: var(--entry); color: var(--primary); }
+.post-content table:not(.highlighttable, .highlight table, .gist .highlight) td,
+.post-content table:not(.highlighttable, .highlight table, .gist .highlight) th { border-bottom: 1px solid var(--border); }
+
+/* ---------- Severity badges ---------- */
+.sev-badges { display: inline-flex; gap: 6px; vertical-align: middle; }
+.sev-badge {
+  position: relative; z-index: 2;      /* above PaperMod's full-card .entry-link overlay */
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+html .sev-badge.sev-critical { color: #ff6b81 !important; background: rgba(255, 107, 129, .14); }
+html .sev-badge.sev-high     { color: #ff9f43 !important; background: rgba(255, 159, 67, .14); }
+html .sev-badge.sev-medium   { color: #f5d547 !important; background: rgba(245, 213, 71, .13); }
+html .sev-badge.sev-low      { color: #5fb3ff !important; background: rgba(95, 179, 255, .14); }
+html .sev-badge.sev-info, html .sev-badge.sev-informational { color: #a3aab5 !important; background: rgba(163, 170, 181, .12); }
+.sev-badge:hover { filter: brightness(1.15); }
+
+:root:not([data-theme="dark"]) .sev-badge.sev-critical { color: #b4232f !important; }
+:root:not([data-theme="dark"]) .sev-badge.sev-high { color: #b45309 !important; }
+:root:not([data-theme="dark"]) .sev-badge.sev-medium { color: #8a6d00 !important; }
+:root:not([data-theme="dark"]) .sev-badge.sev-low { color: #1d5fa8 !important; }
+
+/* ---------- Example banner + finding card ---------- */
+.example-banner {
+  margin: 0 0 var(--content-gap);
+  padding: 12px 16px;
+  border: 1px dashed #f5d547;
+  border-radius: var(--radius);
+  background: rgba(245, 213, 71, .08);
+  color: var(--content);
+  font-size: 15px;
+}
+.example-banner strong { color: #f5d547; text-transform: uppercase; letter-spacing: .05em; font-size: 13px; margin-right: 4px; }
+:root:not([data-theme="dark"]) .example-banner strong { color: #8a6d00; }
+.example-banner code { font-size: .9em; background: var(--code-bg); padding: .1em .35em; border-radius: 4px; }
+
+.finding-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px 24px;
+  margin: 0 0 var(--content-gap);
+  padding: 16px 20px;
+  background: var(--entry);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+}
+.finding-card dt { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--secondary); margin-bottom: 4px; }
+.finding-card dd { margin: 0; color: var(--primary); font-size: 15px; }
+
+/* Severity list page: make terms look like badges too */
+.terms-tags a[href*="/severity/critical"] { color: #ff6b81; background: rgba(255,107,129,.14); }
+.terms-tags a[href*="/severity/high"]     { color: #ff9f43; background: rgba(255,159,67,.14); }
+.terms-tags a[href*="/severity/medium"]   { color: #f5d547; background: rgba(245,213,71,.13); }
+.terms-tags a[href*="/severity/low"]      { color: #5fb3ff; background: rgba(95,179,255,.14); }
+
+/* Search */
+#searchbox input:focus { border-color: var(--accent); }
+#searchResults .focus { box-shadow: 0 0 0 1px var(--accent); }
+
+/* Social icons */
+.social-icons a:hover svg { color: var(--accent); }
+
+.sev-badge { opacity: 1 !important; }
+.post-meta .sev-badges, .entry-footer .sev-badges { margin-right: 2px; }
+
+/* Tighter homepage hero */
+.home-info { margin: 12px 0 28px; }
+.first-entry.home-info { min-height: auto; }
