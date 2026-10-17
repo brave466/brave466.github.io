@@ -1,5 +1,5 @@
-# Replace USERNAME with your GitHub username before deploying.
-baseURL = "https://USERNAME.github.io/"
+# Site URL (GitHub Pages user site).
+baseURL = "https://brave466.github.io/"
 languageCode = "en-us"
 title = "brave"
 theme = "PaperMod"
@@ -75,7 +75,7 @@ enableGitInfo = false
     url = "https://x.com/your-handle"
   [[params.socialIcons]]
     name = "github"
-    url = "https://github.com/your-handle"
+    url = "https://github.com/brave466"
   [[params.socialIcons]]
     name = "rss"
     url = "index.xml"
