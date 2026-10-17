@@ -1,15 +1,9 @@
-{{- /* Neon link cards for profiles. Uses site.Params.socialIcons (skips RSS). */ -}}
-<div class="social-cards">
+{{- /* Profile links as a plain mono table. Uses site.Params.socialIcons (skips RSS). */ -}}
+<ul class="links">
 {{- range site.Params.socialIcons }}
   {{- if ne .name "rss" }}
-  <a class="social-card" href="{{ .url | safeURL }}" target="_blank" rel="noopener noreferrer me">
-    <span class="sc-icon">{{ partial "svg.html" . }}</span>
-    <span class="sc-text">
-      <span class="sc-name">{{ .title | default (cond (eq .name "x") "X / Twitter" (cond (eq .name "hackerone") "HackerOne" (cond (eq .name "bugcrowd") "Bugcrowd" (cond (eq .name "github") "GitHub" (.name | title))))) }}</span>
-      <span class="sc-url">{{ replaceRE "^https?://" "" .url }}</span>
-    </span>
-    {{- if in .url "your-handle" }}<span class="sc-ph">placeholder</span>{{ end }}
-  </a>
+  {{- $label := .title | default (cond (eq .name "x") "x/twitter" (.name | lower)) }}
+  <li><a href="{{ .url | safeURL }}" target="_blank" rel="noopener noreferrer me"><span class="l-name">{{ $label }}</span><span class="l-url">{{ replaceRE "^https?://" "" .url }}</span>{{ if in .url "your-handle" }}<span class="l-ph">placeholder</span>{{ end }}<span class="l-arrow" aria-hidden="true">-&gt;</span></a></li>
   {{- end }}
 {{- end }}
-</div>
+</ul>

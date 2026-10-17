@@ -1,18 +1,15 @@
-{{- /* Banner + finding details shown at top of a write-up. Context: page */ -}}
+{{- /* Example banner + finding spec sheet. Context: page */ -}}
 {{- if .Params.example }}
-<div class="example-banner" role="note">
-  <strong>Example post</strong> — fictional target (<code>example.com</code>) used to preview the layout. Not a real finding, program, or bounty.
-</div>
+<aside class="example-banner" role="note">
+  <span class="eb-tag">NOTE</span>
+  <p><strong>Example post.</strong> Fictional target (<code>example.com</code>) used to preview the layout &mdash; not a real finding, program, or bounty.</p>
+</aside>
 {{- end }}
 {{- if or .Params.program .Params.bounty (.GetTerms "severity") }}
 <dl class="finding-card">
-  {{- with .GetTerms "severity" }}
-  <div><dt>Severity</dt><dd>{{ partial "severity_badges.html" $ }}</dd></div>
-  {{- end }}
-  {{- with .GetTerms "tags" }}
-  <div><dt>Bug class</dt><dd>{{ range $i, $t := . }}{{ if $i }}, {{ end }}<a href="{{ $t.RelPermalink }}">{{ $t.Title }}</a>{{ end }}</dd></div>
-  {{- end }}
-  {{- with .Params.program }}<div><dt>Program</dt><dd>{{ . }}</dd></div>{{ end }}
-  {{- with .Params.bounty }}<div><dt>Bounty</dt><dd>{{ . }}</dd></div>{{ end }}
+  {{- with .GetTerms "severity" }}<div><dt>severity</dt><dd>{{ partial "severity_badges.html" $ }}</dd></div>{{ end }}
+  {{- with .GetTerms "tags" }}<div><dt>class</dt><dd>{{ range $i, $t := . }}{{ if $i }}, {{ end }}<a href="{{ $t.RelPermalink }}">{{ $t.Title | lower }}</a>{{ end }}</dd></div>{{ end }}
+  {{- with .Params.program }}<div><dt>program</dt><dd>{{ . }}</dd></div>{{ end }}
+  {{- with .Params.bounty }}<div><dt>bounty</dt><dd>{{ . }}</dd></div>{{ end }}
 </dl>
 {{- end }}

@@ -42,24 +42,23 @@ enableGitInfo = false
   DateFormat = "January 2, 2006"
   mainSections = ["posts"]
 
+  [params.assets]
+    theme_color = "#0b0b0a"
+    msapplication_TileColor = "#0b0b0a"
+
   [params.homeInfoParams]
     Title = "brave"
-    Content = "Bug bounty write-ups and AppSec notes."
+    Content = "Bug bounty write-ups\nand AppSec notes."   # \n = line break in the hero
 
-  # Homepage terminal hero
-  [params.terminal]
-    user = "brave"
-    host = "bounty"
+  # Homepage hero (man-page style). Edit freely.
+  [params.hero]
+    prompt = "brave@bounty:~$"
     handle = "your-handle"            # TODO: your bug bounty handle
-    focus = "XSS · IDOR · SSRF · Auth bypass"
-    latest = 3                        # how many write-ups `ls writeups/` lists
+    focus = "xss · idor · ssrf · auth bypass"
+    since = "2026"
 
-  # Homepage stat cards.
-  # "Write-ups" and "Bug classes" are computed automatically from content.
-  # The two below are PLACEHOLDERS: leave as "" to show "—", or fill in your real numbers.
-  [params.stats]
-    bugsReported = ""                 # TODO: e.g. "42"
-    hallOfFames = ""                  # TODO: e.g. "7"
+  [params.footer]
+    text = "<span class=\"eof\">&#45;&#45; EOF &#45;&#45;</span>"
 
   # Placeholder social links — replace with your real handles.
   [[params.socialIcons]]

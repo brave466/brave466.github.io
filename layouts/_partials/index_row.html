@@ -1,0 +1,13 @@
+{{- /* One index row. Context: dict "p" page "no" number "i" stagger index */ -}}
+{{- $p := .p -}}
+<article class="row reveal" style="--i: {{ .i }}">
+  <span class="row-no">{{ printf "%03d" .no }}</span>
+  <time class="row-date" datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date.Format "2006.01.02" }}</time>
+  <div class="row-main">
+    <h3 class="row-title"><a href="{{ $p.RelPermalink }}" data-scramble="hover">{{ $p.Title }}</a></h3>
+    {{- with ($p.Summary | plainify | htmlUnescape) }}<p class="row-sum">{{ . | truncate 150 }}</p>{{ end }}
+    {{- with $p.GetTerms "tags" }}<p class="row-tags">{{ range . }}<span>#{{ .Title | lower | urlize }}</span>{{ end }}</p>{{ end }}
+  </div>
+  <span class="row-sev">{{ partial "sev_text.html" $p }}</span>
+  <span class="row-arrow" aria-hidden="true">-&gt;</span>
+</article>

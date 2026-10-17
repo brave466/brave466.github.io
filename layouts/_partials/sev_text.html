@@ -1,0 +1,2 @@
+{{- /* Non-link bracket severity (for use inside row links). Context: page */ -}}
+{{- range .GetTerms "severity" -}}<span class="sev sev-{{ .Title | lower | urlize }}">[{{ upper .Title }}]</span>{{- end -}}

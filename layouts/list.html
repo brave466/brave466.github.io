@@ -1,0 +1,27 @@
+{{- define "main" }}
+{{- $pages := union .RegularPages .Sections }}
+{{- $paginator := .Paginate $pages.ByDate.Reverse }}
+<header class="page-header">
+  <p class="page-path">~/brave{{ .RelPermalink }}</p>
+  <h1>{{ if eq .Kind "term" }}<span class="ph-kind">{{ .Data.Singular | lower }}:</span> {{ end }}{{ .Title }}</h1>
+  {{- with .Description }}<p class="post-description">{{ . | markdownify }}</p>{{ end }}
+</header>
+{{- with .Content }}<div class="post-content md-content">{{ . }}</div>{{ end }}
+<section class="index">
+  <header class="index-head">
+    <h2>LISTING</h2><span class="index-rule" aria-hidden="true"></span><span class="index-count">{{ printf "%03d" (len $pages) }} entries</span>
+  </header>
+  {{- $all := (where site.RegularPages "Section" "posts").ByDate }}
+  {{- range $i, $p := $paginator.Pages }}
+    {{- $no := 0 }}
+    {{- range $j, $q := $all }}{{ if eq $q $p }}{{ $no = add $j 1 }}{{ end }}{{ end }}
+    {{- partial "index_row.html" (dict "p" $p "no" $no "i" $i) }}
+  {{- end }}
+</section>
+{{- if gt $paginator.TotalPages 1 }}
+<nav class="pagination">
+  {{- with $paginator.Prev }}<a class="prev" href="{{ .URL }}">&lt;- newer</a>{{ end }}
+  {{- with $paginator.Next }}<a class="next" href="{{ .URL }}">older -&gt;</a>{{ end }}
+</nav>
+{{- end }}
+{{- end }}

@@ -1,0 +1,43 @@
+{{- define "main" }}
+{{- $h := site.Params.hero -}}
+{{- $posts := where site.RegularPages "Section" "posts" -}}
+{{- $sorted := $posts.ByDate.Reverse -}}
+{{- $total := len $posts -}}
+<section class="hero">
+  <canvas class="noise" aria-hidden="true"></canvas>
+  <div class="man-head" aria-hidden="true"><span>BRAVE(1)</span><span class="mh-mid">AppSec Field Notes</span><span>BRAVE(1)</span></div>
+  <h1 class="visually-hidden">{{ site.Title }}</h1>
+  {{ partial "ascii_logo.html" . }}
+  <p class="hero-tag" data-scramble="load">{{ site.Params.homeInfoParams.Content }}</p>
+
+  <div class="man">
+    <div class="man-sec">
+      <h2 class="man-label">NAME</h2>
+      <p class="man-body">brave &mdash; notes on breaking web apps responsibly. Findings are published after fix &amp; disclosure.</p>
+    </div>
+    <div class="man-sec">
+      <h2 class="man-label">SYNOPSIS</h2>
+      <div class="man-body sh" id="sh">
+        <div class="sh-line"><span class="sh-p">{{ $h.prompt }}</span> <span class="sh-cmd" data-type="whoami">whoami</span></div>
+        <div class="sh-line sh-out">{{ $h.handle }}</div>
+        <div class="sh-line"><span class="sh-p">{{ $h.prompt }}</span> <span class="sh-cmd" data-type="cat focus.txt">cat focus.txt</span></div>
+        <div class="sh-line sh-out sh-hl">{{ $h.focus }}</div>
+        <div class="sh-line sh-last"><span class="sh-p">{{ $h.prompt }}</span> <span class="caret" aria-hidden="true"></span></div>
+      </div>
+    </div>
+    <p class="man-stats">{{ printf "%03d" $total }} write-ups <i>/</i> {{ len site.Taxonomies.tags }} bug classes <i>/</i> {{ len site.Taxonomies.severity }} severities{{ with $sorted }} <i>/</i> last entry {{ (index . 0).Date.Format "2006.01.02" }}{{ end }}</p>
+  </div>
+</section>
+
+<section class="index" aria-labelledby="index-h">
+  <header class="index-head">
+    <h2 id="index-h">INDEX</h2>
+    <span class="index-rule" aria-hidden="true"></span>
+    <span class="index-count">{{ printf "%03d" $total }} entries</span>
+  </header>
+  {{- range $i, $p := first 20 $sorted }}
+  {{- partial "index_row.html" (dict "p" $p "no" (sub $total $i) "i" $i) }}
+  {{- end }}
+  {{- if gt $total 20 }}<p class="index-more"><a href="{{ "posts/" | relURL }}">-&gt; full index</a></p>{{ end }}
+</section>
+{{- end }}
