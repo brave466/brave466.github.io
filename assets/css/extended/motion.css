@@ -1,0 +1,200 @@
+/* ================================================================
+   brave v4 — motion layer. Only transform/opacity are animated
+   (plus one clip-path reveal for code). All gated by .js / .motion,
+   and removed entirely under prefers-reduced-motion.
+   ================================================================ */
+:root { --ease: cubic-bezier(.2,.7,.2,1); --ease-io: cubic-bezier(.7,0,.2,1); }
+
+/* failsafe: if the script never initialises, show everything after 3s */
+@keyframes failsafe { to { opacity: 1; translate: none; clip-path: none; } }
+.js:not(.motion) .reveal, .js:not(.motion) .ascii-logo, .js:not(.motion) [data-scramble="load"],
+.js:not(.motion) .post-content h2, .js:not(.motion) .codeblock .highlight { animation: failsafe 0s 3s forwards; }
+
+/* ---------- boot screen ---------- */
+html.booting body { overflow: hidden; }
+html.booting::before { content: ""; position: fixed; inset: 0; z-index: 9998; background: var(--bg); animation: boot-failsafe 0s 4s forwards; }
+@keyframes boot-failsafe { to { opacity: 0; visibility: hidden; } }
+.boot-screen {
+  position: fixed; inset: 0; z-index: 9999; background: var(--bg); color: var(--ink-2);
+  display: flex; flex-direction: column; justify-content: flex-end; padding: 6vh 6vw;
+  font-family: var(--mono); cursor: pointer;
+  transition: transform .55s var(--ease-io);
+}
+.boot-screen.out { transform: translate3d(0, -100%, 0); }
+.boot-screen::after { /* acid edge that leads the wipe */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--acid);
+  transform: scaleX(0); transform-origin: left; transition: transform .25s var(--ease);
+}
+.boot-screen.out::after { transform: scaleX(1); }
+.boot-log { margin: 0; background: none; padding: 0; font-size: 14px; line-height: 1.7; color: var(--ink-2); overflow: hidden; max-height: 80vh; }
+.boot-log div { animation: boot-line .12s linear; white-space: pre; }
+.boot-log div:first-child { color: var(--dim); }
+.boot-log .warn { color: var(--sev-medium); }
+.boot-log .cmd { color: var(--acid); }
+.boot-log div:last-child::after { content: ""; display: inline-block; width: .6em; height: 1.1em; vertical-align: -.2em; margin-left: 4px; background: var(--acid); }
+@keyframes boot-line { from { opacity: 0; transform: translateX(-6px); } }
+.boot-bar { height: 2px; margin-top: 22px; background: var(--faint); max-width: 520px; }
+.boot-bar i { display: block; height: 100%; background: var(--acid); transform: scaleX(0); transform-origin: left; transition: transform .1s linear; }
+
+/* ---------- page wipes ---------- */
+.wipe {
+  position: fixed; inset: 0; z-index: 9990; background: var(--acid);
+  transform: scaleX(0); transform-origin: left; transition: transform .36s var(--ease-io);
+  display: flex; align-items: flex-end; padding: 5vh 5vw; pointer-events: none;
+}
+.wipe.go { transform: scaleX(1); }
+.wipe-label { font-family: var(--mono); font-weight: 700; font-size: clamp(16px, 2.4vw, 28px); color: #000; opacity: 0; transition: opacity .15s .18s; }
+.wipe.go .wipe-label { opacity: 1; }
+html.wipe-in::after {
+  content: ""; position: fixed; inset: 0; z-index: 9990; background: var(--acid); pointer-events: none;
+  transform-origin: right; animation: wipe-out .5s var(--ease-io) .06s forwards;
+}
+@keyframes wipe-out { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* ---------- progress bar ---------- */
+.progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200; pointer-events: none; }
+.progress i { display: block; height: 100%; background: var(--acid); transform: scaleX(0); transform-origin: left; will-change: transform; }
+
+/* ---------- custom cursor (fine pointers only) ---------- */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+html.has-cursor input[type="search"], html.has-cursor input[type="text"], html.has-cursor textarea { cursor: text !important; }
+.cur-dot, .cur-ring { position: fixed; top: 0; left: 0; z-index: 10000; pointer-events: none; will-change: transform; }
+.cur-dot { width: 0; height: 0; }
+.cur-dot::before { content: ""; position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; background: var(--acid); transition: transform .2s var(--ease), opacity .2s; }
+.cur-dot.is-link::before { transform: scale(.5); }
+.cur-dot.is-row::before { transform: scale(0); }
+.cur-ring { width: 0; height: 0; }
+.cur-ring::before {
+  content: ""; position: absolute; left: -16px; top: -16px; width: 32px; height: 32px;
+  border: 1px solid var(--acid);
+  transition: transform .3s var(--ease), background-color .3s, border-color .3s;
+}
+/* crosshair ticks */
+.cur-ring::after {
+  content: ""; position: absolute; left: -22px; top: -22px; width: 44px; height: 44px;
+  background:
+    linear-gradient(var(--acid), var(--acid)) 50% 0 / 1px 5px no-repeat,
+    linear-gradient(var(--acid), var(--acid)) 50% 100% / 1px 5px no-repeat,
+    linear-gradient(var(--acid), var(--acid)) 0 50% / 5px 1px no-repeat,
+    linear-gradient(var(--acid), var(--acid)) 100% 50% / 5px 1px no-repeat;
+  transition: transform .3s var(--ease), opacity .3s;
+}
+.cur-ring.is-link::before { transform: scale(1.5); }
+.cur-ring.is-link::after { transform: scale(1.5) rotate(45deg); opacity: .8; }
+.cur-ring.is-row::before { transform: scale(.55); }
+.cur-ring.is-row::after { opacity: 0; }
+.cur-ring.down::before { transform: scale(.75); }
+.cur-ring span {
+  position: absolute; left: 16px; top: 14px; padding: 3px 7px;
+  font: 700 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+  color: #000; background: var(--acid);
+  transform: scale(0); transform-origin: 0 0; transition: transform .25s var(--ease);
+}
+.cur-ring span:empty { display: none; }
+.cur-ring.is-row span { transform: scale(1); }
+.cur-ring.is-row span::after { content: " ->"; }
+
+/* ---------- magnetic targets ---------- */
+#menu a { display: inline-block; position: relative; transform: translate3d(var(--mx, 0px), var(--my, 0px), 0); transition: transform .35s var(--ease), color .2s; }
+#menu a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 14px; height: 1px; background: var(--acid); transform: scaleX(0); transform-origin: right; transition: transform .35s var(--ease); }
+#menu a:hover::after, #menu a.active::after, #menu .active::after { transform: scaleX(1); transform-origin: left; }
+#menu a:hover { color: var(--ink); }
+
+/* ---------- homepage hero ---------- */
+.ascii-logo { will-change: transform; }
+.ascii-logo .ll { display: block; white-space: pre; transition: transform .08s linear; }
+.ascii-logo .ll.hot { color: var(--acid); }
+.ascii-logo.glitch { }
+.hero-tag { will-change: transform; }
+.js:not(.hero-go) .ascii-logo, .js:not(.hero-go) [data-scramble="load"] { opacity: 0; }
+.man-label.typing::after, [data-typein].typing::after { content: "_"; color: var(--acid); }
+.js [data-typein]:not(.in) { opacity: 0; }
+.sh-line.sh-pop { animation: pop .25s var(--ease); }
+@keyframes pop { from { opacity: 0; transform: translateY(4px); } }
+.clock { color: var(--ink-2); margin-left: 6px; font-variant-numeric: tabular-nums; }
+
+/* noise field across the whole hero */
+.noise {
+  left: calc(50% - 50vw) !important; right: auto !important; width: 100vw !important; opacity: 1 !important;
+  -webkit-mask-image: none; mask-image: none;
+}
+
+/* ---------- ticker ---------- */
+.ticker {
+  position: relative; margin: 0 calc(50% - 50vw) 56px; overflow: hidden;
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  background: var(--bg); font-family: var(--mono); font-weight: 700; font-size: clamp(15px, 1.6vw, 20px);
+  letter-spacing: .06em; color: var(--ink); padding: 12px 0;
+}
+.ticker-track { display: flex; width: max-content; animation: ticker 38s linear infinite; will-change: transform; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker-run { display: flex; flex: none; }
+.ticker-run span { padding: 0 18px; transition: color .2s; }
+.ticker-run i { font-style: normal; color: var(--acid); }
+.ticker:hover .ticker-run span:hover { color: #000; background: var(--acid); }
+@keyframes ticker { to { transform: translate3d(-50%, 0, 0); } }
+
+/* ---------- index rows ---------- */
+.row { transform: translate3d(calc(var(--mx, 0px) + var(--hx, 0px)), var(--my, 0px), 0); transition: transform .45s var(--ease); }
+.row:hover, .row:focus-within { --hx: 14px; }
+.row::before { /* top rule draws in on reveal */
+  content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--rule);
+  transform: scaleX(0); transform-origin: left; transition: transform .9s var(--ease) calc(var(--i, 0) * 120ms);
+}
+.row.in::before { transform: scaleX(1); }
+.row-title a { display: inline-block; transition: transform .35s var(--ease); }
+.row:hover .row-title a { transform: translateX(4px); }
+.row:hover .row-sev .sev { animation: sev-blink .5s steps(2) 2; }
+@keyframes sev-blink { 50% { opacity: .2; } }
+.js .reveal { opacity: 0; translate: -60px 0; }
+.js .reveal.in { opacity: 1; translate: 0 0; transition: opacity .7s ease calc(var(--i, 0) * 120ms), translate .9s var(--ease) calc(var(--i, 0) * 120ms), transform .45s var(--ease); }
+
+/* generic fade-up for misc blocks */
+.js .finding-card, .js .example-banner, .js .post-footer, .js .post-content .links li, .js .terms-tags li, .js .archive-entry, .js #searchbox { opacity: 0; translate: 0 18px; transition: opacity .6s ease, translate .7s var(--ease); }
+.js .finding-card.in, .js .example-banner.in, .js .post-footer.in, .js .post-content .links li.in, .js .terms-tags li.in, .js .archive-entry.in, .js #searchbox.in { opacity: 1; translate: 0 0; }
+.js .post-content .links li:nth-child(2) { transition-delay: .08s; } .js .post-content .links li:nth-child(3) { transition-delay: .16s; } .js .post-content .links li:nth-child(4) { transition-delay: .24s; }
+.post-content .links a { transform: translate3d(var(--mx, 0px), var(--my, 0px), 0); }
+
+/* ---------- post page ---------- */
+.js .post-content h2:not(.in), .js .post-content h3:not(.in) { opacity: 0; }
+.post-content h2.in::before { display: inline-block; white-space: pre; animation: hash-in .5s var(--ease); }
+@keyframes hash-in { from { opacity: 0; transform: translateX(-14px); } }
+
+.codeblock { overflow: hidden; }
+.js .codeblock .highlight { clip-path: inset(0 0 100% 0); }
+.js .codeblock.in .highlight { clip-path: inset(0 0 0 0); transition: clip-path 1s steps(14, end) .1s; }
+.codeblock::after { /* scanline sweep */
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 100%; pointer-events: none;
+  border-bottom: 2px solid var(--acid); transform: translateY(-100%); opacity: 0;
+}
+.js .codeblock.in::after { animation: scan 1.05s var(--ease) .1s forwards; }
+@keyframes scan { 0% { transform: translateY(-100%); opacity: 1; } 85% { opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
+
+.js .post-content table tr { opacity: 0; translate: -16px 0; }
+.js .post-content table.in tr { opacity: 1; translate: 0 0; transition: opacity .45s ease calc(var(--i, 0) * 90ms), translate .55s var(--ease) calc(var(--i, 0) * 90ms); }
+
+.copy-code { overflow: hidden; isolation: isolate; }
+.copy-code::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--acid); transform: scaleX(0); transform-origin: left; }
+.copy-code.ok { color: #000 !important; border-color: var(--acid) !important; }
+.copy-code.ok::before { animation: copy-fill 1.7s var(--ease) forwards; }
+@keyframes copy-fill { 0% { transform: scaleX(0); } 18% { transform: scaleX(1); } 80% { transform: scaleX(1); transform-origin: left; } 81% { transform-origin: right; } 100% { transform: scaleX(0); transform-origin: right; } }
+
+.post-title.scrambling, .post-title { will-change: auto; }
+
+/* ---------- touch / small screens ---------- */
+@media (hover: none), (pointer: coarse) {
+  .cur-dot, .cur-ring { display: none; }
+  .row:hover, .row:focus-within { --hx: 0px; }
+}
+@media (max-width: 768px) {
+  .ticker { margin-bottom: 40px; padding: 10px 0; }
+  .js .reveal { translate: -30px 0; }
+}
+
+/* ---------- reduced motion: everything off ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; flex-wrap: wrap; width: auto; }
+  .ticker-run + .ticker-run { display: none; }
+  .noise, .cur-dot, .cur-ring, .progress, .boot-screen, .wipe { display: none !important; }
+  html.booting::before, html.wipe-in::after { display: none; }
+}

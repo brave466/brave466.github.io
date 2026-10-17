@@ -117,7 +117,6 @@ main.main:has(.hero) { max-width: calc(var(--nav-width) + var(--gap) * 2); }
   padding: 22px 0 24px;
   border-bottom: 1px solid var(--faint);
   cursor: pointer;
-  transition: transform .35s cubic-bezier(.2,.7,.2,1), background-color .35s;
 }
 .row::after { /* accent rule draws in on hover */
   content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
@@ -133,7 +132,6 @@ main.main:has(.hero) { max-width: calc(var(--nav-width) + var(--gap) * 2); }
 .row-tags { margin: 8px 0 0; font-family: var(--mono); font-size: 12.5px; color: var(--dim); display: flex; flex-wrap: wrap; gap: 4px 12px; }
 .row-sev { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
 .row-arrow { font-family: var(--mono); white-space: nowrap; color: var(--acid); opacity: 0; transform: translateX(-10px); transition: opacity .3s, transform .35s cubic-bezier(.2,.7,.2,1); }
-.row:hover, .row:focus-within { transform: translateX(8px); }
 .row:hover::after, .row:focus-within::after { transform: scaleX(1); }
 .row:hover .row-no, .row:focus-within .row-no { color: var(--acid); }
 .row:hover .row-arrow, .row:focus-within .row-arrow { opacity: 1; transform: translateX(0); }
@@ -141,12 +139,6 @@ main.main:has(.hero) { max-width: calc(var(--nav-width) + var(--gap) * 2); }
 .index-more { font-family: var(--mono); font-size: 14px; margin-top: 18px; }
 .index-more a { color: var(--acid); }
 
-/* reveal (only when JS is on; failsafe shows rows anyway after 2.5s) */
-.js .reveal { opacity: 0; transform: translateY(14px); animation: failsafe 0s 2.5s forwards; }
-.js .reveal.in { opacity: 1; transform: none; animation: none;
-  transition: opacity .6s ease calc(var(--i, 0) * 90ms), transform .7s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * 90ms); }
-.js .reveal.in:hover { transform: translateX(8px); transition-delay: 0s; }
-@keyframes failsafe { to { opacity: 1; transform: none; } }
 
 /* ---------- Severity: bracket tags ---------- */
 .sev { font-family: var(--mono); font-weight: 700; font-size: .78em; letter-spacing: .04em; text-decoration: none !important; box-shadow: none !important; }
@@ -342,7 +334,5 @@ details.toc summary { color: var(--dim); }
 /* ---------- Motion safety ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
-  .js .reveal { opacity: 1; transform: none; }
-  .row:hover { transform: none; }
 }
 html, body { overflow-x: clip; }

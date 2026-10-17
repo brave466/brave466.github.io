@@ -1,4 +1,13 @@
-<script>document.documentElement.classList.add('js');</script>
+<meta name="brave-posts" content="{{ len (where site.RegularPages "Section" "posts") }}">
+<script>
+/* motion gate: runs before first paint so intro/wipe covers never flash */
+(function(){var d=document.documentElement;
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){d.classList.add('reduced');return;}
+d.classList.add('js');
+try{if(!sessionStorage.getItem('brave-booted'))d.classList.add('booting');
+else if(sessionStorage.getItem('brave-wipe')){d.classList.add('wipe-in');sessionStorage.removeItem('brave-wipe');}}catch(e){}
+})();
+</script>
 <link rel="preload" href="{{ "fonts/ibm-plex-mono-latin-400-normal.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ "fonts/ibm-plex-mono-latin-700-normal.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ "fonts/source-serif-4-latin-400-normal.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>

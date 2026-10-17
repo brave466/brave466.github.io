@@ -57,6 +57,9 @@ enableGitInfo = false
     focus = "xss · idor · ssrf · auth bypass"
     since = "2026"
 
+  # Scrolling ticker between hero and index
+  ticker = ["XSS", "IDOR", "SSRF", "AUTH BYPASS", "RCE", "SQLI", "CSRF", "OPEN REDIRECT", "RACE CONDITIONS", "PROTOTYPE POLLUTION"]
+
   [params.footer]
     text = "<span class=\"eof\">&#45;&#45; EOF &#45;&#45;</span>"
 
