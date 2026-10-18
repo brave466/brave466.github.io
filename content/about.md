@@ -9,7 +9,7 @@ ShowPostNavLinks: false
 
 <p class="about-lead"><span class="sh-p">brave@bounty:~$</span> cat about.txt</p>
 
-I'm Alexander Inkoom, a penetration tester and application security engineer based in Ghana. Most of my time goes into API security testing and secure code review. Outside of work I hunt on bug bounty programs, dig into publicly disclosed vulnerabilities to understand how they really work, and play CTFs. My team took 2nd and 3rd place at Break The Code CTF in 2023 and 2024. This blog is where I write up what I find, once it's fixed and disclosure is allowed.
+I'm Alexander Inkoom, a penetration tester and application security engineer based in Ghana. Most of my time goes into hacking web applications and their underlying APIs, code review, and anything else that catches my interest. Outside of work I hunt on bug bounty programs, dig into publicly disclosed vulnerabilities to understand how they really work, and play CTFs. My team took 2nd and 3rd place at Break The Code CTF in 2023 and 2024. This blog is where I write up what I find, once it's fixed and disclosure is allowed.
 
 <div class="about-man">
   <section class="am-sec">
