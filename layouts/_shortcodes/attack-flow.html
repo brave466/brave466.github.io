@@ -3,9 +3,10 @@
      @attacker|@victim|@handoff|@takeover  <title…>
      <detail line>
      !! <detail line rendered as a danger/alert beat>
-   Lanes: attacker = left, victim = right, handoff/takeover = full width.
-   Full diagram is emitted statically; JS reveals steps in sequence.
-   Reduced-motion / no-JS readers get the finished diagram. */ -}}
+   Optional per-step direction for a cross-lane packet: add  >>right  or  >>left
+   on the title line (handoff defaults to a left->right packet).
+   Full diagram is emitted statically; JS reveals steps in sequence with
+   motion. Reduced-motion / no-JS readers get the finished diagram. */ -}}
 {{- $atk := .Get "attacker" | default "ATTACKER (unauthenticated)" -}}
 {{- $vic := .Get "victim" | default "VICTIM" -}}
 {{- $blocks := split (trim .Inner "\n") "\n\n" -}}
@@ -13,11 +14,15 @@
 {{- range $blocks -}}
   {{- $lines := split (trim . "\n") "\n" -}}
   {{- $head := trim (index $lines 0) " \r\t" -}}
+  {{- $dir := "" -}}
+  {{- if findRE ">>right" $head -}}{{- $dir = "right" -}}{{- $head = trim (replace $head ">>right" "") " " -}}{{- end -}}
+  {{- if findRE ">>left" $head -}}{{- $dir = "left" -}}{{- $head = trim (replace $head ">>left" "") " " -}}{{- end -}}
   {{- $side := "attacker" -}}{{- $title := $head -}}
   {{- range $k, $v := (slice "attacker" "victim" "handoff" "takeover") -}}
     {{- $tag := printf "@%s " $v -}}
     {{- if hasPrefix $head $tag -}}{{- $side = $v -}}{{- $title = trim (strings.TrimPrefix $tag $head) " " -}}{{- end -}}
   {{- end -}}
+  {{- if and (eq $side "handoff") (eq $dir "") -}}{{- $dir = "right" -}}{{- end -}}
   {{- $details := slice -}}
   {{- range after 1 $lines -}}
     {{- $d := trim . " \r\t" -}}
@@ -29,16 +34,23 @@
       {{- end -}}
     {{- end -}}
   {{- end -}}
-  {{- $steps = $steps | append (dict "side" $side "title" $title "details" $details) -}}
+  {{- $steps = $steps | append (dict "side" $side "title" $title "details" $details "dir" $dir) -}}
 {{- end -}}
 <div class="attack-flow" aria-label="Animated attack flow">
-  <div class="af-head"><span class="af-tab">ATTACK FLOW</span><button type="button" class="af-replay" aria-label="Replay the attack flow">replay</button></div>
+  <div class="af-head">
+    <span class="af-tab">ATTACK FLOW</span>
+    <span class="af-count" aria-hidden="true"><b class="af-cur">00</b>/<span class="af-tot">{{ printf "%02d" (len $steps) }}</span></span>
+    <button type="button" class="af-replay" aria-label="Replay the attack flow">replay</button>
+  </div>
+  <div class="af-bar" aria-hidden="true"><span class="af-bar-fill"></span></div>
   <div class="af-lanes" aria-hidden="true"><span class="af-lane af-lane-l">{{ $atk }}</span><span class="af-lane af-lane-r">{{ $vic }}</span></div>
   <ol class="af-steps">
   {{- range $i, $s := $steps -}}
-    <li class="af-step af-{{ $s.side }}" style="--af-i: {{ $i }}">
+    <li class="af-step af-{{ $s.side }}{{ with $s.dir }} af-dir-{{ . }}{{ end }}" style="--af-i: {{ $i }}">
       <span class="af-node" aria-hidden="true"></span>
+      {{- if $s.dir -}}<span class="af-wire" aria-hidden="true"><span class="af-packet"></span></span>{{- end -}}
       <div class="af-card">
+        <span class="af-idx" aria-hidden="true">{{ printf "%02d" (add $i 1) }}</span>
         <span class="af-title">{{ $s.title }}</span>
         {{- range $s.details -}}
           <span class="af-detail{{ if .alert }} af-alert{{ end }}">{{ .text }}</span>
@@ -53,23 +65,35 @@
 (function () {
   'use strict';
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
   function init(root) {
     var steps = [].slice.call(root.querySelectorAll('.af-step')),
-        btn = root.querySelector('.af-replay');
+        btn = root.querySelector('.af-replay'),
+        fill = root.querySelector('.af-bar-fill'),
+        cur = root.querySelector('.af-cur');
     if (!steps.length) return;
-    if (reduce) { if (btn) btn.hidden = true; return; }
+    if (reduce) { if (btn) btn.hidden = true; if (fill) fill.style.width = '100%'; if (cur) cur.textContent = pad(steps.length); return; }
     root.classList.add('af-js');
-    var timers = [], running = false;
-    function clear() { timers.forEach(clearTimeout); timers = []; }
+    var timers = [], running = false, n = steps.length;
+    function clear(){ timers.forEach(clearTimeout); timers = []; }
     function run() {
       clear(); running = true;
       if (btn) btn.classList.add('is-running');
-      steps.forEach(function (s) { s.classList.remove('is-in'); });
+      if (fill) fill.style.width = '0%';
+      if (cur) cur.textContent = '00';
+      steps.forEach(function (s){ s.classList.remove('is-in','is-active'); });
       steps.forEach(function (s, i) {
         timers.push(setTimeout(function () {
-          s.classList.add('is-in');
-          if (i === steps.length - 1) { running = false; if (btn) btn.classList.remove('is-running'); }
-        }, 260 + i * 620));
+          steps.forEach(function(o){ o.classList.remove('is-active'); });
+          s.classList.add('is-in','is-active');
+          if (fill) fill.style.width = ((i + 1) / n * 100) + '%';
+          if (cur) cur.textContent = pad(i + 1);
+          if (i === n - 1) {
+            running = false;
+            if (btn) btn.classList.remove('is-running');
+            timers.push(setTimeout(function(){ s.classList.remove('is-active'); }, 900));
+          }
+        }, 300 + i * 780));
       });
     }
     if (btn) btn.addEventListener('click', run);
@@ -80,7 +104,7 @@
       io.observe(root);
     } else { run(); }
   }
-  function boot() { [].slice.call(document.querySelectorAll('.attack-flow')).forEach(init); }
+  function boot(){ [].slice.call(document.querySelectorAll('.attack-flow')).forEach(init); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
 </script>
