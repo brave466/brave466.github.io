@@ -60,12 +60,11 @@ enableGitInfo = false
   # Scrolling ticker between hero and index (part of [params.hero])
   ticker = ["IDOR", "BOLA", "SSRF", "XSS", "AUTH BYPASS", "SQLI"]
 
-  # Guest comments (Cusdis). Paste the App ID from the Cusdis dashboard to
-  # enable; empty = the comments section is not rendered at all.
-  [params.cusdis]
-    appId = ""
-    host = "https://cusdis.com"   # or your self-hosted Cusdis URL
-    theme = "dark"
+  # Comments (CommentBox.io). Paste the Project ID from dashboard.commentbox.io
+  # to enable; empty = the comments section is not rendered at all.
+  [params.commentbox]
+    projectId = ""
+    sortOrder = "newest"   # best | newest | oldest
 
   # Like button (Lyket). Paste your PUBLIC API key to enable; empty = hidden.
   [params.likes]

@@ -1,4 +1,4 @@
-/* brave — likes (Lyket REST) + guest comments (Cusdis), loaded only when configured. */
+/* brave — likes (Lyket REST) + comments (CommentBox.io), loaded only when configured. */
 (function () {
   'use strict';
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -61,69 +61,59 @@
     });
   }
 
-  /* ---------------- comments ---------------- */
-  var thread = document.getElementById('cusdis_thread');
-  if (thread) initComments(thread);
+  /* ---------------- comments (CommentBox.io) ---------------- */
+  var wrap = document.querySelector('[data-cb]');
+  if (wrap) initComments(wrap);
 
-  function initComments(el) {
-    var host = (el.getAttribute('data-host') || 'https://cusdis.com').replace(/\/+$/, ''),
-        status = el.querySelector('[data-cm-status]'),
-        theme = el.getAttribute('data-theme') || 'dark',
-        heard = false, started = false;
+  function initComments(wrap) {
+    var project = wrap.getAttribute('data-cb-project'),
+        canon = (wrap.getAttribute('data-cb-url') || location.href).split('#')[0].split('?')[0],
+        sort = wrap.getAttribute('data-cb-sort') || 'newest',
+        status = wrap.querySelector('[data-cm-status]'),
+        box = wrap.querySelector('.commentbox'),
+        started = false;
 
-    function say(t, cls) { if (!status) return; status.textContent = t; if (cls) el.classList.add(cls); }
-
-    window.addEventListener('message', function (e) {
-      var m; try { m = typeof e.data === 'string' ? JSON.parse(e.data) : null; } catch (x) { return; }
-      if (!m || m.from !== 'cusdis') return;
-      if (!heard) { heard = true; el.classList.add('cm-live'); }
-      if (m.event === 'onload' && window.CUSDIS && CUSDIS.setTheme) CUSDIS.setTheme(theme);
-    });
-
-    function skin(frame) {
-      /* Cusdis renders into a srcdoc iframe (same origin as this page), so we can add
-         a small stylesheet for fonts/edges. Best effort: silently skipped if it fails. */
-      try {
-        var d = frame.contentDocument; if (!d || !d.head || d.getElementById('brave-skin')) return;
-        var fonts = new URL('/fonts/', location.href).href;
-        var st = d.createElement('style'); st.id = 'brave-skin';
-        st.textContent =
-          '@font-face{font-family:"IBM Plex Mono";font-weight:400;src:url(' + fonts + 'ibm-plex-mono-latin-400-normal.woff2) format("woff2")}' +
-          '@font-face{font-family:"IBM Plex Mono";font-weight:700;src:url(' + fonts + 'ibm-plex-mono-latin-700-normal.woff2) format("woff2")}' +
-          ':root{color-scheme:dark}html,body{background:transparent!important;color:#e9e6dc;font-family:"IBM Plex Mono",ui-monospace,monospace!important}' +
-          '*{border-radius:0!important;font-family:inherit!important}' +
-          'input,textarea{background:#121211!important;color:#e9e6dc!important;border:1px solid #3a3833!important}' +
-          'input:focus,textarea:focus{outline:1px solid #c6ff00!important;border-color:#c6ff00!important}' +
-          'button{background:#c6ff00!important;color:#0b0b0a!important;border:0!important;text-transform:uppercase;letter-spacing:.06em}' +
-          'a{color:#c6ff00!important}';
-        d.head.appendChild(st);
-      } catch (x) {}
+    function say(t) { if (status) status.textContent = t; }
+    function fail() {
+      wrap.classList.add('cm-error');
+      var f = box.querySelector('iframe'); if (f) f.style.display = 'none';
+      say('> [ERR] comment server did not answer. try again later.');
     }
-
+    function boot() {
+      try {
+        window.commentBox(project, {
+          className: 'commentbox',
+          defaultBoxId: 'commentbox',
+          sortOrder: sort,
+          backgroundColor: '#121211',
+          textColor: '#e9e6dc',
+          subtextColor: '#8f8b7f',
+          /* thread key = canonical permalink (+ #box id): stable across hosts, query strings and hashes */
+          createBoxUrl: function (boxId) { return canon + '#' + boxId; },
+          onCommentCount: function (n) {
+            wrap.classList.add('cm-live'); say('> ' + n + (n === 1 ? ' comment' : ' comments'));
+          }
+        });
+        var f = box.querySelector('iframe');
+        if (f) f.setAttribute('title', 'Comments');
+      } catch (e) { fail(); return; }
+      setTimeout(function () { if (!wrap.classList.contains('cm-live')) fail(); }, 15000);
+    }
     function start() {
       if (started) return; started = true;
-      say('> connecting to comment server' + '…');
+      say('> connecting to comment server…');
+      if (window.commentBox) return boot();
       var s = document.createElement('script');
-      s.src = host + '/js/cusdis.es.js'; s.async = true;
-      s.onerror = function () { say('> [ERR] comment server unreachable. try again later.', 'cm-error'); };
-      s.onload = function () {
-        var f = el.querySelector('iframe');
-        if (f) { f.setAttribute('title', 'Comments'); f.setAttribute('loading', 'lazy'); f.addEventListener('load', function () { skin(f); }); skin(f); }
-      };
+      s.src = 'https://unpkg.com/commentbox.io@2.1.0/dist/commentBox.min.js';
+      s.async = true; s.onload = boot; s.onerror = fail;
       document.body.appendChild(s);
-      setTimeout(function () {
-        if (heard) return;
-        var f = el.querySelector('iframe'); if (f) f.style.display = 'none';
-        el.insertAdjacentHTML('afterbegin', '<p class="cm-status cm-error-msg">&gt; [ERR] comment server did not answer. try again later.</p>');
-        el.classList.add('cm-error');
-      }, 9000);
     }
 
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (es) {
         if (es.some(function (x) { return x.isIntersecting; })) { io.disconnect(); start(); }
       }, { rootMargin: '600px 0px' });
-      io.observe(el);
+      io.observe(wrap);
     } else start();
   }
 })();

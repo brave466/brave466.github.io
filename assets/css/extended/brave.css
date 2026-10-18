@@ -358,7 +358,7 @@ html, body { overflow-x: clip; }
   .post-content h2.am-label { line-height: 1.4; }
 }
 
-/* ---------- likes + guest comments (rendered only when configured) ---------- */
+/* ---------- likes + comments (rendered only when configured) ---------- */
 .like-box { position: relative; display: flex; align-items: center; gap: 14px; margin: 28px 0 0; font-family: var(--mono); }
 .like-btn { display: inline-flex; align-items: center; gap: 0; padding: 7px 12px; background: transparent; color: var(--ink); border: 1px solid var(--rule); border-radius: 0; font: 700 15px/1 var(--mono); letter-spacing: .04em; cursor: pointer; transition: color .15s, border-color .15s, background .15s; }
 .like-btn .lb-plus { padding: 0 .6em; }
@@ -383,8 +383,12 @@ html, body { overflow-x: clip; }
 .comments .cm-hash { color: var(--acid); margin-right: .5ch; }
 .comments .cm-note { margin: 0 0 18px; font: 13px/1.5 var(--mono); color: var(--dim); }
 .cm-thread { min-height: 64px; border: 1px solid var(--rule); background: var(--bg-2); padding: 14px 16px; }
-.cm-thread.cm-live { padding: 8px 10px; }
-.cm-thread iframe { display: block; width: 100% !important; border: 0; background: transparent; color-scheme: dark; }
+.cm-thread.cm-live { padding: 12px 12px 6px; }
+.cm-thread .commentbox:empty { display: none; }
+.cm-thread .commentbox { margin-top: 10px; }
+.cm-thread .commentbox iframe { display: block; width: 100% !important; border: 0; background: #121211; color-scheme: dark; }
+.cm-thread.cm-live .cm-status { display: none; }
+.cm-thread.cm-live .commentbox { margin-top: 0; }
 .cm-status { margin: 0; font: 13px/1.6 var(--mono); color: var(--dim); }
 .cm-thread.cm-error { border-color: #5a2a20; }
 .cm-thread.cm-error .cm-status, .cm-error-msg { color: #ff7a5c; }

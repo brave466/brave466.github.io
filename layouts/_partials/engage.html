@@ -1,11 +1,11 @@
 {{- /* Likes + guest comments for write-ups. Each widget renders only when
-       its key is set in hugo.toml ([params.likes] / [params.cusdis]). */ -}}
+       its key is set in hugo.toml ([params.likes] / [params.commentbox]). */ -}}
 {{- $likes := site.Params.likes | default dict }}
-{{- $cus := site.Params.cusdis | default dict }}
+{{- $cb := site.Params.commentbox | default dict }}
 {{- $hasLikes := and $likes.key (eq ($likes.provider | default "lyket") "lyket") }}
-{{- $hasCus := $cus.appId }}
+{{- $hasCb := $cb.projectId }}
 {{- if $hasLikes }}{{ partial "likes.html" (dict "page" . "cfg" $likes) }}{{ end }}
-{{- if $hasCus }}{{ partial "comments.html" (dict "page" . "cfg" $cus) }}{{ end }}
-{{- if or $hasLikes $hasCus }}
+{{- if $hasCb }}{{ partial "comments.html" (dict "page" . "cfg" $cb) }}{{ end }}
+{{- if or $hasLikes $hasCb }}
 <script src="{{ "js/engage.js" | relURL }}" defer></script>
 {{- end }}
