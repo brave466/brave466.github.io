@@ -1,0 +1,67 @@
+/* ================================================================
+   brave v4 — terminal "replay" widget (shortcode: terminal-replay)
+   self-contained animated transcript. off-black screen, one acid
+   accent, IBM Plex Mono. Progressive: the full transcript is in the
+   HTML, so no-JS and reduced-motion readers see the finished run.
+   ================================================================ */
+.term-replay {
+  margin: 1.8em 0 1.6em;
+  border: 1px solid var(--faint);
+  border-left: 2px solid var(--acid);
+  background: var(--code-block-bg);
+  font-family: var(--mono);
+}
+
+/* header: mirrors .codeblock::before — tiny uppercase mono tab + a button */
+.tr-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 6px 10px 6px 14px;
+  border-bottom: 1px solid var(--faint);
+  background: #0d0d0c;
+}
+.tr-path {
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tr-path b { color: var(--acid); font-weight: 500; margin-right: 6px; } /* the ■ marker */
+.tr-replay {
+  flex: none; font-family: var(--mono); font-size: 11px; text-transform: lowercase; letter-spacing: .04em;
+  color: var(--dim); background: transparent; border: 1px solid var(--rule); border-radius: 0;
+  padding: 2px 9px; cursor: pointer; transition: color .15s, background .15s, border-color .15s;
+}
+.tr-replay::before { content: "\25B8\00a0"; } /* ▸ */
+.tr-replay:hover, .tr-replay:focus-visible { color: #000; background: var(--acid); border-color: var(--acid); outline: none; }
+.tr-replay.is-running { color: var(--acid); border-color: var(--rule); background: transparent; }
+.tr-replay.is-running::before { content: "\25A0\00a0"; } /* ■ while running */
+
+/* screen */
+.tr-screen {
+  margin: 0; padding: 14px 16px; background: var(--code-block-bg);
+  font-size: 14px; line-height: 1.65; color: var(--ink-2);
+  overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+  min-height: calc(var(--tr-lines, 6) * 1.65em + 28px);
+}
+.tr-line { display: block; white-space: pre-wrap; }
+.tr-line.is-cmd { color: var(--ink); }
+.tr-prompt { color: var(--acid); font-weight: 700; user-select: none; }
+.tr-line.is-cmt, .tr-cmt { color: var(--dim); }
+.tr-line.is-out { color: var(--ink-2); }
+.tr-line.is-out .tr-cmt { font-style: italic; }
+
+/* blinking block cursor — same cadence as the site caret */
+.tr-cursor {
+  display: inline-block; width: .55em; height: 1.05em; vertical-align: -.18em; margin-left: 1px;
+  background: var(--acid); animation: tr-blink 1.1s steps(1) infinite;
+}
+@keyframes tr-blink { 50% { opacity: 0; } }
+
+/* while JS is driving the run, lines appear one at a time */
+.term-replay.tr-js .tr-line.tr-pending { display: none; }
+
+@media (max-width: 480px) { .tr-screen { font-size: 13px; } }
+
+/* reduced motion: no blink, no JS typing; the static transcript stands */
+@media (prefers-reduced-motion: reduce) {
+  .tr-cursor { animation: none; display: none; }
+}
+:root.reduced .tr-cursor { animation: none; display: none; }

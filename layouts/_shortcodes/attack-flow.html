@@ -1,0 +1,87 @@
+{{- /* attack-flow — animated sequence diagram, on-brand with the zine.
+   Authoring (raw shortcode, one step per blank-line-separated block):
+     @attacker|@victim|@handoff|@takeover  <title…>
+     <detail line>
+     !! <detail line rendered as a danger/alert beat>
+   Lanes: attacker = left, victim = right, handoff/takeover = full width.
+   Full diagram is emitted statically; JS reveals steps in sequence.
+   Reduced-motion / no-JS readers get the finished diagram. */ -}}
+{{- $atk := .Get "attacker" | default "ATTACKER (unauthenticated)" -}}
+{{- $vic := .Get "victim" | default "VICTIM" -}}
+{{- $blocks := split (trim .Inner "\n") "\n\n" -}}
+{{- $steps := slice -}}
+{{- range $blocks -}}
+  {{- $lines := split (trim . "\n") "\n" -}}
+  {{- $head := trim (index $lines 0) " \r\t" -}}
+  {{- $side := "attacker" -}}{{- $title := $head -}}
+  {{- range $k, $v := (slice "attacker" "victim" "handoff" "takeover") -}}
+    {{- $tag := printf "@%s " $v -}}
+    {{- if hasPrefix $head $tag -}}{{- $side = $v -}}{{- $title = trim (strings.TrimPrefix $tag $head) " " -}}{{- end -}}
+  {{- end -}}
+  {{- $details := slice -}}
+  {{- range after 1 $lines -}}
+    {{- $d := trim . " \r\t" -}}
+    {{- if ne $d "" -}}
+      {{- if hasPrefix $d "!!" -}}
+        {{- $details = $details | append (dict "alert" true "text" (trim (strings.TrimPrefix "!!" $d) " ")) -}}
+      {{- else -}}
+        {{- $details = $details | append (dict "alert" false "text" $d) -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $steps = $steps | append (dict "side" $side "title" $title "details" $details) -}}
+{{- end -}}
+<div class="attack-flow" aria-label="Animated attack flow">
+  <div class="af-head"><span class="af-tab">ATTACK FLOW</span><button type="button" class="af-replay" aria-label="Replay the attack flow">replay</button></div>
+  <div class="af-lanes" aria-hidden="true"><span class="af-lane af-lane-l">{{ $atk }}</span><span class="af-lane af-lane-r">{{ $vic }}</span></div>
+  <ol class="af-steps">
+  {{- range $i, $s := $steps -}}
+    <li class="af-step af-{{ $s.side }}" style="--af-i: {{ $i }}">
+      <span class="af-node" aria-hidden="true"></span>
+      <div class="af-card">
+        <span class="af-title">{{ $s.title }}</span>
+        {{- range $s.details -}}
+          <span class="af-detail{{ if .alert }} af-alert{{ end }}">{{ .text }}</span>
+        {{- end -}}
+      </div>
+    </li>
+  {{- end -}}
+  </ol>
+</div>
+{{- if not (.Page.Store.Get "afFlowJS") -}}{{- .Page.Store.Set "afFlowJS" true -}}
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function init(root) {
+    var steps = [].slice.call(root.querySelectorAll('.af-step')),
+        btn = root.querySelector('.af-replay');
+    if (!steps.length) return;
+    if (reduce) { if (btn) btn.hidden = true; return; }
+    root.classList.add('af-js');
+    var timers = [], running = false;
+    function clear() { timers.forEach(clearTimeout); timers = []; }
+    function run() {
+      clear(); running = true;
+      if (btn) btn.classList.add('is-running');
+      steps.forEach(function (s) { s.classList.remove('is-in'); });
+      steps.forEach(function (s, i) {
+        timers.push(setTimeout(function () {
+          s.classList.add('is-in');
+          if (i === steps.length - 1) { running = false; if (btn) btn.classList.remove('is-running'); }
+        }, 260 + i * 620));
+      });
+    }
+    if (btn) btn.addEventListener('click', run);
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (en) {
+        en.forEach(function (x) { if (x.isIntersecting && !running) { io.disconnect(); run(); } });
+      }, { threshold: 0.2 });
+      io.observe(root);
+    } else { run(); }
+  }
+  function boot() { [].slice.call(document.querySelectorAll('.attack-flow')).forEach(init); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+{{- end -}}

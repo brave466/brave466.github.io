@@ -1,0 +1,102 @@
+/* ================================================================
+   brave v4 — animated attack-flow sequence diagram (attack-flow)
+   two lanes + a center rail; steps slide in one at a time.
+   static/no-JS/reduced-motion: the finished diagram stands.
+   ================================================================ */
+.attack-flow {
+  margin: 1.9em 0 1.7em;
+  border: 1px solid var(--faint);
+  border-left: 2px solid var(--acid);
+  background: var(--code-block-bg);
+  font-family: var(--mono);
+}
+.af-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 6px 10px 6px 14px; border-bottom: 1px solid var(--faint); background: #0d0d0c;
+}
+.af-tab { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.af-replay {
+  flex: none; font-family: var(--mono); font-size: 11px; text-transform: lowercase; letter-spacing: .04em;
+  color: var(--dim); background: transparent; border: 1px solid var(--rule); border-radius: 0;
+  padding: 2px 9px; cursor: pointer; transition: color .15s, background .15s, border-color .15s;
+}
+.af-replay::before { content: "\25B8\00a0"; }
+.af-replay:hover, .af-replay:focus-visible { color: #000; background: var(--acid); border-color: var(--acid); outline: none; }
+.af-replay.is-running::before { content: "\25A0\00a0"; }
+
+/* lane headers */
+.af-lanes {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  padding: 12px 16px 4px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+}
+.af-lane { color: var(--acid); }
+.af-lane-l { text-align: left; }
+.af-lane-r { text-align: right; }
+
+/* the rail + steps */
+.af-steps {
+  list-style: none; margin: 0; padding: 8px 16px 18px; position: relative;
+}
+.af-steps::before { /* center rail */
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 1px;
+  background: var(--rule); transform: translateX(-.5px);
+}
+.af-step { position: relative; width: 52%; margin: 0 0 14px; padding: 0; }
+.af-attacker { margin-right: auto; padding-right: 22px; }
+.af-victim   { margin-left: auto;  padding-left: 22px; text-align: right; }
+.af-handoff, .af-takeover { width: 100%; text-align: center; padding: 0; }
+
+/* node dot on the rail */
+.af-node {
+  position: absolute; top: 9px; width: 9px; height: 9px; background: var(--acid);
+  border-radius: 50%; box-shadow: 0 0 0 3px var(--code-block-bg);
+}
+.af-attacker .af-node { right: -4.5px; }
+.af-victim   .af-node { left: -4.5px; }
+.af-handoff .af-node, .af-takeover .af-node { left: 50%; transform: translateX(-50%); }
+
+.af-card {
+  display: inline-flex; flex-direction: column; gap: 2px; text-align: left;
+  border: 1px solid var(--faint); border-left: 2px solid var(--acid);
+  background: #121210; padding: 8px 11px; font-size: 13px; line-height: 1.55;
+}
+.af-victim .af-card { border-left: 1px solid var(--faint); border-right: 2px solid var(--acid); }
+.af-handoff .af-card, .af-takeover .af-card { border-left: none; border-top: 2px solid var(--acid); }
+.af-title { color: var(--ink); font-weight: 600; }
+.af-detail { color: var(--ink-2); }
+.af-detail.af-alert { color: #ff5a4d; font-weight: 600; }
+
+/* handoff arrow beat */
+.af-handoff .af-card { background: transparent; border: none; border-top: 1px dashed var(--rule); border-bottom: 1px dashed var(--rule); align-items: center; }
+.af-handoff .af-title { color: var(--acid); letter-spacing: .04em; }
+.af-handoff .af-title::after { content: " \2192"; }
+
+/* takeover banner */
+.af-takeover .af-card { background: transparent; border: 1px solid var(--acid); align-items: center; padding: 10px 14px; }
+.af-takeover .af-title { color: var(--acid); letter-spacing: .12em; text-transform: uppercase; }
+
+/* ---- animation: slide in from each side ---- */
+.attack-flow.af-js .af-step { opacity: 0; transform: translateY(8px); }
+.attack-flow.af-js .af-attacker { transform: translate(-14px, 4px); }
+.attack-flow.af-js .af-victim   { transform: translate(14px, 4px); }
+.attack-flow.af-js .af-step.is-in {
+  opacity: 1; transform: translate(0, 0);
+  transition: opacity .42s ease, transform .42s cubic-bezier(.2,.7,.2,1);
+}
+.attack-flow.af-js .af-step .af-node { transform: scale(0); }
+.attack-flow.af-js .af-handoff .af-node, .attack-flow.af-js .af-takeover .af-node { transform: translateX(-50%) scale(0); }
+.attack-flow.af-js .af-step.is-in .af-node { transform: scale(1); transition: transform .3s ease .12s; }
+.attack-flow.af-js .af-handoff.is-in .af-node, .attack-flow.af-js .af-takeover.is-in .af-node { transform: translateX(-50%) scale(1); transition: transform .3s ease .12s; }
+
+@media (max-width: 560px) {
+  .af-steps::before, .af-attacker .af-node, .af-victim .af-node { display: none; }
+  .af-step, .af-attacker, .af-victim { width: 100%; margin: 0 0 12px; padding: 0 0 0 16px; text-align: left; border-left: 1px solid var(--rule); }
+  .af-victim .af-card { border-right: none; border-left: 2px solid var(--acid); }
+  .attack-flow.af-js .af-attacker, .attack-flow.af-js .af-victim { transform: translate(-10px, 4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attack-flow.af-js .af-step { opacity: 1 !important; transform: none !important; }
+  .attack-flow.af-js .af-step .af-node { transform: scale(1) !important; }
+}
+:root.reduced .attack-flow.af-js .af-step { opacity: 1 !important; transform: none !important; }

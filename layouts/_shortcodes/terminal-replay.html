@@ -1,0 +1,106 @@
+{{- /* terminal-replay — animated "live run" of a transcript, on-brand with the zine.
+       Authoring (raw angle-bracket shortcode form, one entry per line):
+         #  …            a comment line (dim)
+         $  …            a command (typed out char-by-char, acid prompt)
+         <anything else> a response/output line; an inline " #…" tail renders dim
+         (blank line)    a spacer between steps
+       The full transcript is emitted as static HTML, so no-JS and
+       reduced-motion readers get the finished run; JS replays it. */ -}}
+{{- $path := .Get "path" | default "poc/replay.sh" -}}
+{{- $lines := split (trim .Inner "\n") "\n" -}}
+{{- $items := slice -}}
+{{- range $lines -}}
+  {{- $l := trim . " \r\t" -}}
+  {{- if eq $l "" -}}
+    {{- $items = $items | append (dict "t" "sp") -}}
+  {{- else if hasPrefix $l "#" -}}
+    {{- $items = $items | append (dict "t" "cmt" "text" $l) -}}
+  {{- else if hasPrefix $l "$" -}}
+    {{- $items = $items | append (dict "t" "cmd" "text" (trim (strings.TrimPrefix "$" $l) " ")) -}}
+  {{- else -}}
+    {{- $out := $l -}}{{- $cmt := "" -}}
+    {{- if in $l " #" -}}
+      {{- $parts := split $l " #" -}}
+      {{- $out = trim (index $parts 0) " " -}}
+      {{- $cmt = printf "# %s" (trim (delimit (after 1 $parts) " #") " ") -}}
+    {{- end -}}
+    {{- $items = $items | append (dict "t" "out" "text" $out "cmt" $cmt) -}}
+  {{- end -}}
+{{- end -}}
+<div class="term-replay" aria-label="Animated proof-of-concept replay" style="--tr-lines: {{ add (len $items) 1 }}">
+<div class="tr-head"><span class="tr-path"><b>&#9632;</b>{{ $path }}</span><button type="button" class="tr-replay" aria-label="Replay the proof-of-concept run">replay</button></div>
+<div class="tr-screen" role="img" aria-label="Proof-of-concept transcript">{{- range $items -}}
+{{- if eq .t "sp" -}}<span class="tr-line is-sp"> </span>
+{{- else if eq .t "cmt" -}}<span class="tr-line is-cmt">{{ .text }}</span>
+{{- else if eq .t "cmd" -}}<span class="tr-line is-cmd"><span class="tr-prompt">$ </span>{{ .text }}</span>
+{{- else -}}<span class="tr-line is-out">{{ .text }}{{ with .cmt }}<span class="tr-cmt">   {{ . }}</span>{{ end }}</span>
+{{- end -}}
+{{- end -}}<span class="tr-line is-cmd"><span class="tr-prompt">$ </span><span class="tr-cursor" aria-hidden="true"></span></span></div>
+<script type="application/json" class="tr-data">{{ $items | jsonify }}</script>
+</div>
+{{- if not (.Page.Store.Get "trReplayJS") -}}{{- .Page.Store.Set "trReplayJS" true -}}
+<script>
+/* terminal-replay: dependency-free type-out. Skipped under reduced motion
+   (the static transcript already carries the full run). */
+(function () {
+  'use strict';
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function init(root) {
+    var screen = root.querySelector('.tr-screen'), btn = root.querySelector('.tr-replay'), src = root.querySelector('.tr-data');
+    if (!screen || !src) return;
+    var data; try { data = JSON.parse(src.textContent); } catch (e) { return; }
+    if (typeof data === 'string') { try { data = JSON.parse(data); } catch (e) { return; } }
+    if (!Array.isArray(data) || !data.length) return;
+    if (reduce) { if (btn) btn.hidden = true; return; }
+    root.classList.add('tr-js');
+    var timers = [], running = false;
+    function after(ms, fn) { var t = setTimeout(fn, ms); timers.push(t); return t; }
+    function stop() { timers.forEach(clearTimeout); timers = []; }
+    function mk(cls) { var s = document.createElement('span'); s.className = cls; return s; }
+    function cursor() { var c = mk('tr-cursor'); c.setAttribute('aria-hidden', 'true'); return c; }
+    function run() {
+      stop(); running = true; screen.innerHTML = '';
+      if (btn) { btn.classList.add('is-running'); }
+      var i = 0;
+      function tail() {
+        var line = mk('tr-line is-cmd'); var p = mk('tr-prompt'); p.textContent = '$ ';
+        line.appendChild(p); line.appendChild(cursor()); screen.appendChild(line);
+        running = false; if (btn) btn.classList.remove('is-running');
+      }
+      function type(line, span, text, lo, hi, done) {
+        var cur = cursor(); line.appendChild(cur); var n = 0;
+        (function tick() {
+          span.textContent = text.slice(0, ++n);
+          if (n < text.length) after(rnd(lo, hi), tick);
+          else { line.removeChild(cur); after(rnd(320, 460), done); }
+        })();
+      }
+      function step() {
+        if (i >= data.length) { after(420, tail); return; }
+        var d = data[i++], line;
+        if (d.t === 'sp') { line = mk('tr-line is-sp'); line.textContent = ' '; screen.appendChild(line); after(150, step); return; }
+        if (d.t === 'cmt') { line = mk('tr-line is-cmt'); var s = mk(''); line.appendChild(s); screen.appendChild(line); type(line, s, d.text, 10, 24, step); return; }
+        if (d.t === 'cmd') {
+          line = mk('tr-line is-cmd'); var p = mk('tr-prompt'); p.textContent = '$ '; line.appendChild(p);
+          var s2 = mk(''); line.appendChild(s2); screen.appendChild(line); type(line, s2, d.text, 20, 52, step); return;
+        }
+        line = mk('tr-line is-out'); var o = mk(''); o.textContent = d.text; line.appendChild(o);
+        if (d.cmt) { var c = mk('tr-cmt'); c.textContent = '   ' + d.cmt; line.appendChild(c); }
+        screen.appendChild(line); after(rnd(460, 640), step);
+      }
+      step();
+    }
+    if (btn) btn.addEventListener('click', function () { run(); });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (en) {
+        en.forEach(function (x) { if (x.isIntersecting && !running) { io.disconnect(); run(); } });
+      }, { threshold: 0.35 });
+      io.observe(root);
+    } else { run(); }
+  }
+  function boot() { [].slice.call(document.querySelectorAll('.term-replay')).forEach(init); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+{{- end -}}
