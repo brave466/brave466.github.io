@@ -1,0 +1,16 @@
+{{- $p := .page }}{{ $c := .cfg }}
+<section class="comments" id="comments" aria-labelledby="comments-h">
+  <p class="cm-head" id="comments-h"><span class="cm-hash" aria-hidden="true">##</span> COMMENTS</p>
+  <p class="cm-note">no account needed &middot; comments appear after moderation</p>
+  <div id="cusdis_thread" class="cm-thread"
+       data-host="{{ $c.host | default "https://cusdis.com" }}"
+       data-app-id="{{ $c.appId }}"
+       data-page-id="{{ $p.File.ContentBaseName }}"
+       data-page-url="{{ $p.Permalink }}"
+       data-page-title="{{ $p.Title }}"
+       data-theme="{{ $c.theme | default "dark" }}"
+       data-lang="{{ $c.lang | default "en" }}">
+    <p class="cm-status" data-cm-status>&gt; comments load when you scroll here<span class="cm-cursor" aria-hidden="true">_</span></p>
+  </div>
+  <noscript><p class="cm-status">&gt; comments need JavaScript.</p></noscript>
+</section>

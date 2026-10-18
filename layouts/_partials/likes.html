@@ -1,0 +1,11 @@
+{{- $p := .page }}{{ $c := .cfg }}
+<div class="like-box" data-like
+     data-like-key="{{ $c.key }}"
+     data-like-ns="{{ $c.namespace | default "brave" }}"
+     data-like-id="{{ $p.File.ContentBaseName | urlize }}"{{ if $c.anonymous }}
+     data-like-anon{{ end }}>
+  <button type="button" class="like-btn" aria-pressed="false" aria-label="Like this write-up" disabled>
+    <span class="lb-br" aria-hidden="true">[</span><span class="lb-plus">+1</span><span class="lb-br" aria-hidden="true">]</span>
+  </button>
+  <span class="like-count" aria-live="polite"><b data-like-n>··</b> <span data-like-word>likes</span></span>
+</div>

@@ -25,6 +25,7 @@
     {{- with .GetTerms "tags" }}
     <ul class="post-tags">{{ range . }}<li><a href="{{ .RelPermalink }}">#{{ .Title | lower | urlize }}</a></li>{{ end }}</ul>
     {{- end }}
+    {{- partial "engage.html" . }}
     {{- if (.Param "ShowPostNavLinks") }}{{ partial "post_nav_links.html" . }}{{ end }}
   </footer>
   {{- end }}
