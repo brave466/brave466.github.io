@@ -1,4 +1,4 @@
-/* brave — likes (Lyket REST) + comments (CommentBox.io), loaded only when configured. */
+/* brave — like button (Lyket REST), loaded only when configured. */
 (function () {
   'use strict';
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -59,61 +59,5 @@
       req('PUT', '/press').then(function (s) { state = s; paint(); }, function () { state = prev; paint(); box.classList.add('err'); setTimeout(function () { box.classList.remove('err'); }, 1200); })
         .then(function () { busy = false; });
     });
-  }
-
-  /* ---------------- comments (CommentBox.io) ---------------- */
-  var wrap = document.querySelector('[data-cb]');
-  if (wrap) initComments(wrap);
-
-  function initComments(wrap) {
-    var project = wrap.getAttribute('data-cb-project'),
-        canon = (wrap.getAttribute('data-cb-url') || location.href).split('#')[0].split('?')[0],
-        sort = wrap.getAttribute('data-cb-sort') || 'newest',
-        status = wrap.querySelector('[data-cm-status]'),
-        box = wrap.querySelector('.commentbox'),
-        started = false;
-
-    function say(t) { if (status) status.textContent = t; }
-    function fail() {
-      wrap.classList.add('cm-error');
-      var f = box.querySelector('iframe'); if (f) f.style.display = 'none';
-      say('> [ERR] comment server did not answer. try again later.');
-    }
-    function boot() {
-      try {
-        window.commentBox(project, {
-          className: 'commentbox',
-          defaultBoxId: 'commentbox',
-          sortOrder: sort,
-          backgroundColor: '#121211',
-          textColor: '#e9e6dc',
-          subtextColor: '#8f8b7f',
-          /* thread key = canonical permalink (+ #box id): stable across hosts, query strings and hashes */
-          createBoxUrl: function (boxId) { return canon + '#' + boxId; },
-          onCommentCount: function (n) {
-            wrap.classList.add('cm-live'); say('> ' + n + (n === 1 ? ' comment' : ' comments'));
-          }
-        });
-        var f = box.querySelector('iframe');
-        if (f) f.setAttribute('title', 'Comments');
-      } catch (e) { fail(); return; }
-      setTimeout(function () { if (!wrap.classList.contains('cm-live')) fail(); }, 15000);
-    }
-    function start() {
-      if (started) return; started = true;
-      say('> connecting to comment server…');
-      if (window.commentBox) return boot();
-      var s = document.createElement('script');
-      s.src = 'https://unpkg.com/commentbox.io@2.1.0/dist/commentBox.min.js';
-      s.async = true; s.onload = boot; s.onerror = fail;
-      document.body.appendChild(s);
-    }
-
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) {
-        if (es.some(function (x) { return x.isIntersecting; })) { io.disconnect(); start(); }
-      }, { rootMargin: '600px 0px' });
-      io.observe(wrap);
-    } else start();
   }
 })();
