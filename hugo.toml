@@ -63,7 +63,7 @@ enableGitInfo = false
   # Like button (Lyket). Paste your PUBLIC API key to enable; empty = hidden.
   [params.likes]
     provider = "lyket"
-    key = ""
+    key = "pt_2f68c75ae9fada7b083e300ddf9769"
     namespace = "brave"
     anonymous = false   # true = no localStorage id, Lyket dedupes by IP only
 
