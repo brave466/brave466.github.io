@@ -2,8 +2,8 @@
 <ul class="links">
 {{- range site.Params.socialIcons }}
   {{- if ne .name "rss" }}
-  {{- $label := .title | default (cond (eq .name "x") "x/twitter" (.name | lower)) }}
-  <li><a href="{{ .url | safeURL }}" target="_blank" rel="noopener noreferrer me"><span class="l-name">{{ $label }}</span><span class="l-url">{{ replaceRE "^https?://" "" .url }}</span>{{ if in .url "your-handle" }}<span class="l-ph">placeholder</span>{{ end }}<span class="l-arrow" aria-hidden="true">-&gt;</span></a></li>
+  {{- $label := .title | default (.name | lower) }}
+  <li><a href="{{ .url | safeURL }}" target="_blank" rel="noopener noreferrer me"><span class="l-name">{{ $label }}</span><span class="l-url">{{ replaceRE "^https?://" "" .url }}</span><span class="l-arrow" aria-hidden="true">-&gt;</span></a></li>
   {{- end }}
 {{- end }}
 </ul>

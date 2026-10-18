@@ -13,7 +13,7 @@
   <div class="man">
     <div class="man-sec">
       <h2 class="man-label" data-typein>NAME</h2>
-      <p class="man-body">brave &mdash; notes on breaking web apps responsibly. Findings are published after fix &amp; disclosure.</p>
+      <p class="man-body">brave &mdash; Alexander Inkoom&rsquo;s notes on breaking web apps and APIs. Findings are published after fix &amp; disclosure.</p>
     </div>
     <div class="man-sec">
       <h2 class="man-label" data-typein>SYNOPSIS</h2>
@@ -29,7 +29,7 @@
   </div>
 </section>
 
-{{- $tick := site.Params.ticker | default (slice "XSS" "IDOR" "SSRF" "AUTH BYPASS" "RCE") }}
+{{- $tick := site.Params.hero.ticker | default site.Params.ticker | default (slice "XSS" "IDOR" "SSRF" "AUTH BYPASS" "RCE") }}
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
     {{- range seq 2 }}<span class="ticker-run">{{ range $tick }}<span>{{ . }}</span><i>//</i>{{ end }}{{ range $tick }}<span>{{ . }}</span><i>//</i>{{ end }}</span>{{ end }}

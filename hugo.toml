@@ -28,7 +28,7 @@ enableGitInfo = false
 
 [params]
   env = "production"
-  description = "Bug bounty write-ups and AppSec notes."
+  description = "Bug bounty write-ups and AppSec notes by Alexander Inkoom."
   author = "Alexander Inkoom"
   defaultTheme = "dark"
   disableThemeToggle = true   # neon design is dark-only
@@ -48,34 +48,31 @@ enableGitInfo = false
 
   [params.homeInfoParams]
     Title = "brave"
-    Content = "Bug bounty write-ups\nand AppSec notes."   # \n = line break in the hero
+    Content = "Field notes from breaking\nweb apps and APIs."   # \n = line break in the hero
 
   # Homepage hero (man-page style). Edit freely.
   [params.hero]
     prompt = "brave@bounty:~$"
-    handle = "your-handle"            # TODO: your bug bounty handle
-    focus = "xss · idor · ssrf · auth bypass"
+    handle = "brave"
+    focus = "api security · web apps · secure code review · n-day research"
     since = "2026"
 
-  # Scrolling ticker between hero and index
-  ticker = ["XSS", "IDOR", "SSRF", "AUTH BYPASS", "RCE", "SQLI", "CSRF", "OPEN REDIRECT", "RACE CONDITIONS", "PROTOTYPE POLLUTION"]
+  # Scrolling ticker between hero and index (part of [params.hero])
+  ticker = ["IDOR", "BOLA", "SSRF", "XSS", "AUTH BYPASS", "SQLI"]
 
   [params.footer]
     text = "<span class=\"eof\">&#45;&#45; EOF &#45;&#45;</span>"
 
-  # Placeholder social links — replace with your real handles.
-  [[params.socialIcons]]
-    name = "hackerone"
-    url = "https://hackerone.com/your-handle"
-  [[params.socialIcons]]
-    name = "bugcrowd"
-    url = "https://bugcrowd.com/your-handle"
-  [[params.socialIcons]]
-    name = "x"
-    url = "https://x.com/your-handle"
+  # Profile links (homepage icons + About page list)
   [[params.socialIcons]]
     name = "github"
     url = "https://github.com/brave466"
+  [[params.socialIcons]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/in/alexander-inkoom"
+  [[params.socialIcons]]
+    name = "medium"
+    url = "https://medium.com/@brave___"
   [[params.socialIcons]]
     name = "rss"
     url = "index.xml"

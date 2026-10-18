@@ -9,12 +9,25 @@ ShowPostNavLinks: false
 
 <p class="about-lead"><span class="sh-p">brave@bounty:~$</span> cat about.txt</p>
 
-Hi, I'm **Alexander Inkoom**, an application security engineer. This is where I publish bug bounty write-ups and AppSec notes — mostly web and API vulnerabilities, how I found them, and how they should be fixed.
+I'm Alexander Inkoom, a penetration tester and application security engineer based in Ghana. Most of my time goes into API security testing and secure code review. Outside of work I hunt on bug bounty programs, dig into publicly disclosed vulnerabilities to understand how they really work, and play CTFs. My team took 2nd and 3rd place at Break The Code CTF in 2023 and 2024. This blog is where I write up what I find, once it's fixed and disclosure is allowed.
 
-All write-ups are published only after the issue is fixed and disclosure is permitted by the program.
+<div class="about-man">
+  <section class="am-sec">
+    <h2 class="am-label" data-typein>CERTIFICATIONS</h2>
+    <ul class="am-certs">
+      <li>eWPTX</li><li>eCPPT</li><li>eJPT</li><li>APIsec Certified Practitioner</li><li>CAP</li><li>ISC2 CC</li>
+    </ul>
+  </section>
+  <section class="am-sec">
+    <h2 class="am-label" data-typein>EXPERIENCE</h2>
+    <ol class="am-exp">
+      <li><span class="ex-role">Cyber Security Analyst</span><span class="ex-org">CYBERTEQ</span><span class="ex-yr">2023–2025</span></li>
+      <li><span class="ex-role">Cyber Security Club Lead</span><span class="ex-org">University of Cape Coast</span><span class="ex-yr">2023–2024</span></li>
+      <li><span class="ex-role">Cyber Security Engineer Intern</span><span class="ex-org">Virtually Testing Foundation</span><span class="ex-yr">2022</span></li>
+    </ol>
+  </section>
+</div>
 
 ## Find me
 
 {{< social-cards >}}
-
-> These are **placeholder links** — replace `your-handle` with your real handles in `hugo.toml` (`[[params.socialIcons]]`), which feeds both this list and the homepage.

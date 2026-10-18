@@ -376,12 +376,12 @@
     $$('.row').forEach(function (r, i) { r.style.setProperty('--i', i % 6); });
     observe('.reveal', function (el) { el.classList.add('in'); });
     observe('[data-typein]', function (el) { el.classList.add('in'); setTimeout(function () { typeIn(el, 55); }, 120); });
-    observe('.post-content h2, .post-content h3', function (el) { el.classList.add('in'); scramble(el, { duration: 650, spread: .55, hide: true }); });
+    observe('.post-content h2:not([data-typein]), .post-content h3', function (el) { el.classList.add('in'); scramble(el, { duration: 650, spread: .55, hide: true }); });
     observe('.codeblock', function (el) { el.classList.add('in'); }, { rootMargin: '0px 0px -12% 0px', threshold: 0.2 });
     observe('.post-content table', function (el) {
       $$('tr', el).forEach(function (tr, i) { tr.style.setProperty('--i', i); }); el.classList.add('in');
     });
-    observe('.finding-card, .example-banner, .post-footer, .post-content .links li, .terms-tags li, .archive-entry, #searchbox', function (el) { el.classList.add('in'); });
+    observe('.am-exp li, .finding-card, .example-banner, .post-footer, .post-content .links li, .terms-tags li, .archive-entry, #searchbox', function (el) { el.classList.add('in'); });
 
     // hero sequence starts after the boot screen / page wipe
     boot().then(function (booted) {

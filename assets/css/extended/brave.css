@@ -336,3 +336,24 @@ details.toc summary { color: var(--dim); }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 html, body { overflow-x: clip; }
+
+/* ---------- About: man-page sections ---------- */
+.about-man { margin: 2.4rem 0 1rem; display: grid; gap: 26px; }
+.am-sec { display: grid; grid-template-columns: 16ch minmax(0, 1fr); column-gap: 24px; align-items: baseline; }
+.post-content h2.am-label { margin: 0; padding: 0; font-size: 12.5px; font-weight: 700; letter-spacing: .1em; color: var(--ink); line-height: 1.9; }
+.post-content h2.am-label::before { content: none; }
+.post-content .am-certs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0; font-family: var(--mono); font-size: 14.5px; max-width: none; }
+.post-content .am-certs li { margin: 0; color: var(--ink); }
+.post-content .am-certs li:not(:last-child)::after { content: "/"; color: var(--rule); margin: 0 10px; }
+.post-content .am-exp { list-style: none; margin: 0; padding: 0; max-width: none; border-top: 1px solid var(--faint); }
+.post-content .am-exp li {
+  max-width: none; margin: 0; padding: 10px 0; border-bottom: 1px solid var(--faint);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; font-family: var(--mono); font-size: 14.5px;
+}
+.ex-role { color: var(--ink); grid-column: 1; }
+.ex-org { color: var(--dim); grid-column: 1; font-size: 13px; }
+.ex-yr { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: var(--acid); font-size: 13px; font-variant-numeric: tabular-nums; }
+@media (max-width: 600px) {
+  .am-sec { grid-template-columns: 1fr; row-gap: 8px; }
+  .post-content h2.am-label { line-height: 1.4; }
+}
