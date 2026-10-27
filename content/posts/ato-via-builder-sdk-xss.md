@@ -102,11 +102,10 @@ From that context an attacker can:
 
 - Read all `localStorage` / `sessionStorage` (profile, KYC status, 2FA / passkey / anti-phishing flags, trading prefs, analytics IDs)
 - Learn the victim's exact security posture before a follow-on attack
-- Phish or keylog on the real exchange domain (hidden iframe)
 - Tamper with client-side storage for later visits
 - Make credentialed CORS requests to `internal.target.example` (e.g. CSRF token from `/v2/index`, feature flags from `/v2/settings`)
 
-Bearer-gated endpoints (`/v2/balances/main`, `/v2/ws-token`, `/v2/auth/tokens`) returned 401 — balances were not pulled via this chain alone. The XSS still enables phishing and session abuse on the trusted origin.
+Bearer-gated endpoints (`/v2/balances/main`, `/v2/ws-token`, `/v2/auth/tokens`) returned 401 — balances were not pulled via this chain alone.
 
 ## Remediation
 
