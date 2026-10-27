@@ -96,25 +96,17 @@ https://builder.io/api/v1/proxy-site?proxyUrl=https://attacker.example/poc.html
 
 ## Impact
 
-Proven against a logged-in test session with the full 1-click chain:
+One click against a logged-in victim runs arbitrary JavaScript on `www.target.example`.
 
-| Target | Source | Result |
-|--------|--------|--------|
-| `document.domain` | `builder.evaluate` → `Function()` | `www.target.example` — arbitrary JS confirmed |
-| User profile | `localStorage["user-cache"]` | Category, country, 2FA / passkey / anti-phishing flags, KYC flow, trading prefs, privileges |
-| All `localStorage` | 22–23 keys | Profile, balances cache, trade history/pairs, analytics UUIDs, pixels |
-| `sessionStorage` | 7 keys | Enumerable + readable |
-| Security posture | `user-cache` flags | Attacker learns exact defenses before a follow-on attack |
-| Internal API (CORS) | `internal.target.example` | `/v2/index` CSRF token; `/v2/settings` feature flags — `Access-Control-Allow-Credentials: true` reflecting the exchange origin |
+From that context an attacker can:
 
-What a 1-click attacker gets against a logged-in victim:
+- Read all `localStorage` / `sessionStorage` (profile, KYC status, 2FA / passkey / anti-phishing flags, trading prefs, analytics IDs)
+- Learn the victim's exact security posture before a follow-on attack
+- Phish or keylog on the real exchange domain (hidden iframe)
+- Tamper with client-side storage for later visits
+- Make credentialed CORS requests to `internal.target.example` (e.g. CSRF token from `/v2/index`, feature flags from `/v2/settings`)
 
-- Full client-side storage read (profile, security posture, trading prefs)
-- Phishing on the trusted origin (fake withdrawal / 2FA / login UI inside the hidden iframe)
-- Keylogging and persistent `localStorage` tampering
-- Credentialed CORS reads against internal APIs that trust the exchange origin
-
-Bearer-token-gated endpoints (`/v2/balances/main`, `/v2/ws-token`, `/v2/auth/tokens`) returned 401 from the XSS context — direct financial balances were not pulled via this chain alone. The XSS still enables phishing and session abuse on the real domain.
+Bearer-gated endpoints (`/v2/balances/main`, `/v2/ws-token`, `/v2/auth/tokens`) returned 401 — balances were not pulled via this chain alone. The XSS still enables phishing and session abuse on the trusted origin.
 
 ## Remediation
 
