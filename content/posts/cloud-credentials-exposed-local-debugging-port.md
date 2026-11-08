@@ -7,7 +7,7 @@ summary: "An unauthenticated debugger on 127.0.0.1:7000 exposed a signed-in WebV
 tags: ["CDP", "QtWebEngine", "Credential Exposure", "Desktop Security"]
 severity: ["Low"]
 program: "Private target"
-bounty: "Private"
+bounty: "$50"
 ---
 
 A production desktop application from a private target exposed its embedded browser debugger on `127.0.0.1:7000`. Connecting required no authentication.
