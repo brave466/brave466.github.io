@@ -95,14 +95,6 @@ No cloud credential was used by this chain. The application was signed in during
 - Combining that write with file launch executed a supplied batch file as the application's Windows user.
 - Startup-folder placement created a potential next-logon execution route, but execution after another logon was not demonstrated.
 
-## Boundaries of the finding
-
-This was local delivery leading to native code execution, not demonstrated remote network RCE. Once the local client reached the debugger, the tested chain required no further UI interaction.
-
-Separate-user access, sandbox escape, and a web-to-native route through XSS were discussed as possible extensions, but were not demonstrated. The test also did not establish administrator or SYSTEM execution, or shell argument injection into command interpreters. The process ran with the application's existing user privileges.
-
-This was an application bridge design issue, not evidence of a universal vulnerability in Qt or QWebChannel.
-
 ## Remediation
 
 Remove production CDP access unless explicitly required. Any retained debugging interface needs authentication and appropriate OS-user isolation; an Origin check alone does not authenticate local processes.
