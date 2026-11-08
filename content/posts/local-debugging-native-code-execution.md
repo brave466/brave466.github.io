@@ -111,14 +111,6 @@ Separate-user access, sandbox escape, and a web-to-native route through XSS were
 
 This was an application bridge design issue, not evidence of a universal vulnerability in Qt or QWebChannel.
 
-## Review and outcome
-
-I submitted the report in July. The initial substantive assessment in September rated it Low, with the program emphasizing that exploitation required local access to the affected computer.
-
-I requested another review, distinguishing access to a loopback service from already having code execution as the application's user. Following secondary review, the program retained Low and awarded $50.
-
-The supplied record ends with the report Triaged/Open. It does not establish a verified fix or successful retest.
-
 ## Remediation
 
 Remove production CDP access unless explicitly required. Any retained debugging interface needs authentication and appropriate OS-user isolation; an Origin check alone does not authenticate local processes.
