@@ -89,14 +89,6 @@ The marker tied the result to custom supplied content rather than merely showing
 
 No cloud credential was used by this chain. The application was signed in during testing, however, so the evidence does not independently establish identical behavior in a signed-out state.
 
-## Startup placement was a separate result
-
-The report also demonstrated writing a batch file into the current user's Startup folder. That established a potential next-logon execution route: Windows normally processes eligible Startup items when that user signs in.
-
-It did not establish observed persistence across an actual later logon. The supplied evidence contains placement, not a subsequent sign-in test showing the payload running again.
-
-The distinction is simple: the marker test confirmed immediate custom code execution; Startup placement demonstrated a persistence opportunity. The report states that the test artifacts were removed afterward, leaving no autorun payload behind.
-
 ## Impact
 
 - A local client able to reach the debugger could write supplied content outside the intended destination through the native bridge.
@@ -110,14 +102,6 @@ This was local delivery leading to native code execution, not demonstrated remot
 Separate-user access, sandbox escape, and a web-to-native route through XSS were discussed as possible extensions, but were not demonstrated. The test also did not establish administrator or SYSTEM execution, or shell argument injection into command interpreters. The process ran with the application's existing user privileges.
 
 This was an application bridge design issue, not evidence of a universal vulnerability in Qt or QWebChannel.
-
-## Review and outcome
-
-I submitted the report in July. The initial substantive assessment in September rated it Low, with the program emphasizing that exploitation required local access to the affected computer.
-
-I requested another review, distinguishing access to a loopback service from already having code execution as the application's user. Following secondary review, the program retained Low and awarded $50.
-
-The supplied record ends with the report Triaged/Open. It does not establish a verified fix or successful retest.
 
 ## Remediation
 
