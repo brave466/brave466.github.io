@@ -89,14 +89,6 @@ The marker tied the result to custom supplied content rather than merely showing
 
 No cloud credential was used by this chain. The application was signed in during testing, however, so the evidence does not independently establish identical behavior in a signed-out state.
 
-## Startup placement was a separate result
-
-The report also demonstrated writing a batch file into the current user's Startup folder. That established a potential next-logon execution route: Windows normally processes eligible Startup items when that user signs in.
-
-It did not establish observed persistence across an actual later logon. The supplied evidence contains placement, not a subsequent sign-in test showing the payload running again.
-
-The distinction is simple: the marker test confirmed immediate custom code execution; Startup placement demonstrated a persistence opportunity. The report states that the test artifacts were removed afterward, leaving no autorun payload behind.
-
 ## Impact
 
 - A local client able to reach the debugger could write supplied content outside the intended destination through the native bridge.
